@@ -1,0 +1,107 @@
+
+<%- include('../Layouts/header') %>
+
+
+
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Add Blog</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/dashBoard">DashBoard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">addBlog</li>
+                </ol>
+              </div>
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+        <div class="app-content">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row g-4">
+              <!--begin::Col-->
+              <!--end::Col-->
+              <!--begin::Col-->
+              <div class="col-md-6 mx-auto">
+                <!--begin::Quick Example-->
+               
+                <!--end::Quick Example-->
+                <!--begin::Input Group-->
+               
+                <!--end::Input Group-->
+                <!--begin::Horizontal Form-->
+                <div class="card card-primary card-outline mb-4">
+                  <!--begin::Header-->
+                  <div class="card-header"><div class="card-title">Add Blog</div></div>
+                  <!--end::Header-->
+                  <!--begin::Form-->
+                  <form method="post" action="/blog/insertBlog" >
+                    <!--begin::Body-->
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <label for="inputEmail3" class="col-sm-3 col-form-label pt-0">Select Category</label>
+                            <div class="col-sm-9">
+                                <select class="form-select" name="categoryId" id="validationCustom04" required>
+                                    <option value="">-- Select Category</option>
+                                    <% allCategory.map((item)=>{ %>
+                                        <option value="<%= item.id %>"><%= item.categoryName %></option>
+                                      <% }) %>
+                                </select>
+                            </div>
+                        </div>
+
+                      <div class="row mb-3">
+                        <label for="inputEmail3" class="col-sm-3 col-form-label">Title</label>
+                        <div class="col-sm-9">
+                          <input type="text" name="title" class="form-control" id="inputEmail3" />
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="inputEmail3" class="col-sm-3 col-form-label">Description</label>
+                        <div class="col-sm-9">
+                            <textarea name="description" class="form-control"></textarea>
+                        </div>
+                      </div>
+
+                    </div>
+                    <!--end::Body-->
+                    <!--begin::Footer-->
+                    <div class="card-footer text-center">
+                      <button type="submit" class="btn btn-primary">Add</button>
+                    </div>
+                    <!--end::Footer-->
+                  </form>
+                  <!--end::Form-->
+                </div>
+                <!--end::Horizontal Form-->
+              </div>
+              <!--end::Col-->
+              <!--begin::Col-->
+              
+              <!--end::Col-->
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+      <!--begin::Footer-->
+      
+
+
+<%- include('../Layouts/footer') %>

@@ -1,0 +1,97 @@
+
+<%- include('../Layouts/header') %>
+
+
+    
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Admin Records</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/dashBoard">dashBoard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">viewAdmin</li>
+                </ol>
+              </div>
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+        <div class="app-content">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <!-- /.col -->
+              <div>
+                <!-- /.card -->
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <h3 class="card-title">Admin Record</h3>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body p-0">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th style="width: 10px">#</th>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Gender</th>
+                          <th>Hobby</th>
+                          <th>City</th>
+                          <th>About</th>
+                          <th>Image</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% allAdminRecord.map((item,i)=>{ %>
+                          <tr>
+                            <td valign="middle"><%= i+1 %></td>
+                            <td valign="middle"><%= item.name %></td>
+                            <td valign="middle"><%= item.email %></td>
+                            <td valign="middle"><%= item.gender %></td>
+                            <td valign="middle"><%= item.hobby %></td>
+                            <td valign="middle"><%= item.city %></td>
+                            <td valign="middle"><%= item.about %></td>
+                            <td valign="middle"><img src="<%= item.admin_image %>" height="100px" /></td>
+                            <td valign="middle">
+                              <div class="d-flex align-items-center justify-content-center">
+                                <a href="/deleteAdmin/<%= item.id %>" class="nav-link mx-2"><i class="bi bi-trash-fill"></i></a>
+                                <a href="/updateAdmin/<%= item.id %>" class="nav-link mx-2"><i class="bi bi-pencil-square"></i></a>
+                              </div>
+                            </td>
+                          </tr>
+                        <% }) %>
+                        
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              <!-- /.col -->
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
+     
+
+
+
+<%- include('../Layouts/footer') %>

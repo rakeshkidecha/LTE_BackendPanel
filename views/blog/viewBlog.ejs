@@ -1,0 +1,239 @@
+<%- include('../Layouts/header') %>
+
+<!--end::Sidebar-->
+<!--begin::App Main-->
+<main class="app-main">
+  <!--begin::App Content Header-->
+  <div class="app-content-header">
+    <!--begin::Container-->
+    <div class="container-fluid">
+      <!--begin::Row-->
+      <div class="row">
+        <div class="col-sm-4"><h3 class="mb-0">Blogs</h3></div>
+        <div class="col-sm-4">
+          <form>
+            <input
+              type="text"
+              name="searchValue"
+              value="<%= searchValue %>"
+              placeholder="Search here"
+            />
+            <button
+              type="submit"
+              class="btn btn-primary"
+              style="font-size: 12px"
+            >
+              <i class="bi bi-search"></i>
+            </button>
+            <a
+              href="/blog/viewBlog"
+              class="btn btn-primary"
+              style="font-size: 12px"
+              ><i class="bi bi-arrow-clockwise"></i
+            ></a>
+          </form>
+        </div>
+        <div class="col-sm-4">
+          <ol class="breadcrumb float-sm-end">
+            <li class="breadcrumb-item"><a href="/dashBoard">dashBoard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">viewBlog</li>
+          </ol>
+        </div>
+      </div>
+      <!--end::Row-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content Header-->
+  <!--begin::App Content-->
+  <div class="app-content">
+    <!--begin::Container-->
+    <div class="container-fluid">
+      <!--begin::Row-->
+      <div class="row">
+        <!-- /.col -->
+        <div>
+          <!-- /.card -->
+          <div class="card mb-4">
+            <div class="card-header">
+              <h3 class="card-title">Blogs</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th style="width: 10px">#</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>CreatedDate</th>
+                    <th>UpdatedDate</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% allBlog.map((item,i)=>{ %>
+                  <tr>
+                    <td><%= i+1 %></td>
+                    <td><%= item.title %></td>
+                    <td><%= item.categoryId.categoryName %></td>
+                    <td>
+                      <%= new Date(item.createdAt).toLocaleDateString() %>
+                    </td>
+                    <td>
+                      <%= new Date(item.updatedAt).toLocaleDateString() %>
+                    </td>
+                    <td><%= item.description %></td>
+                    <td>
+                      <div
+                        class="d-flex align-items-center justify-content-center"
+                      >
+                        <a
+                          href="/blog/deleteBlog/<%= item.id %>"
+                          class="nav-link mx-2"
+                          ><i class="bi bi-trash-fill"></i
+                        ></a>
+                        <a
+                          href="javscript:void(0)"
+                          onclick="updateBlog(`<%= JSON.stringify(item) %>`)"
+                          data-bs-toggle="modal"
+                          data-bs-target="#updateBlog"
+                          class="nav-link mx-2"
+                          ><i class="bi bi-pencil-square"></i
+                        ></a>
+                      </div>
+                    </td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <div class="text-center">
+            <a href="/blog/viewBlog?page=<%= page-1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %>" class="btn btn-primary <%= page <= 0 ?'disabled':'' %>">Prev</a>
+            <span><%= page + 1 %></span>
+            <a href="/blog/viewBlog?page=<%= page+1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %>" class="btn btn-primary <%= page > totalPage-1 ?'disabled':'' %>">Next</a>
+          </div>
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!--end::Row-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::App Content-->
+
+  <!-- update Blog Modal  -->
+
+  <div
+    class="modal fade"
+    id="updateBlog"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="post" action="/blog/editBlog">
+          <input type="hidden" name="id" id="id" />
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">
+              Update Category
+            </h1>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!--begin::Body-->
+            <!--begin::Body-->
+            <div class="card-body">
+              <div class="row mb-3">
+                <label for="inputEmail3" class="col-sm-3 col-form-label pt-0"
+                  >Select Category</label
+                >
+                <div class="col-sm-9">
+                  <select
+                    class="form-select"
+                    name="categoryId"
+                    id="categoryId"
+                    required
+                  >
+                    <option value="">-- Select Category</option>
+                    <% allCategory.map((item)=>{ %>
+                    <option value="<%= item.id %>">
+                      <%= item.categoryName %>
+                    </option>
+                    <% }) %>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label for="title" class="col-sm-3 col-form-label">Title</label>
+                <div class="col-sm-9">
+                  <input
+                    type="text"
+                    name="title"
+                    class="form-control"
+                    id="title"
+                  />
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <label for="description" class="col-sm-3 col-form-label"
+                  >Description</label
+                >
+                <div class="col-sm-9">
+                  <textarea
+                    name="description"
+                    id="description"
+                    class="form-control"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+            <!--end::Body-->
+            <!--end::Body-->
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- end update Blog Modal  -->
+</main>
+<!--end::App Main-->
+
+<script>
+  function updateBlog(item) {
+    const blog = JSON.parse(item);
+    document.querySelector("#id").value = blog._id;
+    document.querySelector("#title").value = blog.title;
+    document.querySelector("#description").value = blog.description;
+    document.querySelector("#categoryId").innerHTML = `
+                <% allCategory.map((item)=>{ %>
+                    <option value="<%= item.id %>" <%= item.categoryId == item.id?selected:'' %>><%= item.categoryName %></option>
+                <% }) %>
+            `;
+  }
+</script>
+
+<%- include('../Layouts/footer') %>
