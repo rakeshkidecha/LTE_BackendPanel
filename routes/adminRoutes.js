@@ -4,6 +4,8 @@ const Admin = require('../models/AdminModel');
 const router = express.Router();
 const passport = require('passport');
 
+//user admin Routes
+router.use('/',require('./uearRoutes'));
 
 // nestedRoutes of category  ;
 router.use('/category',passport.checkLoginAdmin,require('./categoryRoutes'));
@@ -13,9 +15,9 @@ router.use('/blog',passport.checkLoginAdmin,require('./blogRoutes'));
 
 // login system ------------
 
-router.get('/',AdminCtl.login);
+router.get('/login',AdminCtl.login);
 
-router.post('/checkLogin',passport.authenticate('local',{failureRedirect:'/'}),AdminCtl.checkLogin);
+router.post('/checkLogin',passport.authenticate('local',{failureRedirect:'/login'}),AdminCtl.checkLogin);
 
 router.get('/logOut',AdminCtl.logOut);
 
@@ -64,5 +66,7 @@ router.get('/deleteAdmin/:id',AdminCtl.deleteAdmin);
 router.get('/updateAdmin/:id',passport.checkLoginAdmin,AdminCtl.updateAdmin);
 
 router.post('/editAdmin',Admin.uploadAdminImage,AdminCtl.editAdmin);
+
+router.post('/deleteAllAdmin',AdminCtl.deleteAllAdmin);
 
 module.exports = router;

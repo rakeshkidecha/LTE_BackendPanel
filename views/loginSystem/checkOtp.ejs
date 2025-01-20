@@ -65,11 +65,11 @@
             </div>
             <% if(isOtpCookie){ %>
               <p id="expirimsg"class='text-danger'>opt expire in <span id="timer"></span>s</p>
+              <p id="resend" class='text-primary' style="cursor: pointer; display: none;">Resend</p>
             <% } else { %>
               <p class="text-danger">OTP Could be Expired</p>
               <p id="resend" class='text-primary' style="cursor: pointer; ">Resend</p>
             <% } %>
-            <p id="resend" class='text-primary' style="cursor: pointer; display: none;">Resend</p>
             <!--begin::Row-->
               <div>
                 <div class="d-grid gap-2">

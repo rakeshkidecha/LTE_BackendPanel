@@ -11,16 +11,19 @@
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <div class="row">
-              <div class="col-sm-4"><h3 class="mb-0">Category Records</h3></div>
-              <div class="col-sm-4">
-                <form>
-                    <input type="text" name="searchValue" value="<%= searchValue %>" placeholder="Search here" />
-                    <button type="submit" class="btn btn-primary" style="font-size: 12px;"><i class="bi bi-search"></i></button>
+            <div class="d-flex justify-content-between">
+              <div ><h3 class="mb-0">Category Records</h3></div>
+              <div class=" z-3 position-relative">
+                <form class="d-flex">
+                    <input type="text" name="searchValue" value="<%= searchValue %>" placeholder="Search here" /> 
+                    <input type="date" name="date" value="<%= date ? date.toISOString().split('T')[0] : '' %>" class="mx-2"/>
+                    <button type="submit" class="btn btn-primary mx-2" style="font-size: 12px;"><i class="bi bi-search"></i></button>
                     <a href="/category/viewCategory" class="btn btn-primary" style="font-size: 12px;"><i class="bi bi-arrow-clockwise"></i></a>
+                    <a href="/category/viewCategory/?sortType=1" style="font-size: 12px;" class="btn btn-primary mx-2"><i class="bi bi-arrow-up"></i></a>
+                    <a href="/category/viewCategory/?sortType=-1" style="font-size: 12px;" class="btn btn-primary"><i class="bi bi-arrow-down"></i></a>
                 </form>
               </div>
-              <div class="col-sm-4">
+              <div>
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="/dashBoard">dashBoard</a></li>
                   <li class="breadcrumb-item active" aria-current="page">viewCategory</li>
@@ -47,36 +50,43 @@
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body p-0">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th style="width: 10px">#</th>
-                          <th>Category Name</th>
-                          <th>CreatedDate</th>
-                          <th>Updated Date</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% let index = 1;
-                         allCategory.map((item,i)=>{
-                            if(item.status) {%>
-                            <tr>
-                                <td><%= index++ %></td>
-                                <td><%= item.categoryName %></td>
-                                <td><%= new Date(item.createdAt).toLocaleDateString() %></td>
-                                <td><%= new Date(item.updatedAt).toLocaleDateString() %></td>
-                                <td>
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <a href="/category/deactiveCategory/<%= item.id %>" class="nav-link mx-2"><i class="bi bi-ban"></i></a>
-                                        <a href="javscript:void(0)" onclick="updateCategory(`<%= JSON.stringify(item) %>`)" data-bs-toggle="modal" data-bs-target="#updateCategory" class="nav-link mx-2"><i class="bi bi-pencil-square"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <% }}) %>
-                        
-                      </tbody>
-                    </table>
+                    <form action="/category/deactiveAll" method="post">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>
+                              <input type="checkbox" id="checkAll" />
+                              <button type="submit" id="deactiveAllBtn" class="d-none"><i class="bi bi-ban"></i></button>
+                            </th>
+                            <th style="width: 10px">#</th>
+                            <th>Category Name</th>
+                            <th>CreatedDate</th>
+                            <th>Updated Date</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% let index = 1;
+                          allCategory.map((item,i)=>{
+                              if(item.status) {%>
+                              <tr>
+                                  <td> <input type="checkbox" name="ids" value="<%= item.id %>" class="activeCategory"/></td>
+                                  <td><%= index++ %></td>
+                                  <td><%= item.categoryName %></td>
+                                  <td><%= new Date(item.createdAt).toLocaleDateString() %></td>
+                                  <td><%= new Date(item.updatedAt).toLocaleDateString() %></td>
+                                  <td>
+                                      <div class="d-flex align-items-center justify-content-center">
+                                          <a href="/category/changeCategoryStatus/<%= item.id %>/false" class="nav-link mx-2"><i class="bi bi-ban"></i></a>
+                                          <a href="javscript:void(0)" onclick="updateCategory(`<%= JSON.stringify(item) %>`)" data-bs-toggle="modal" data-bs-target="#updateCategory" class="nav-link mx-2"><i class="bi bi-pencil-square"></i></a>
+                                      </div>
+                                  </td>
+                              </tr>
+                          <% }}) %>
+                          
+                        </tbody>
+                      </table>
+                    </form>
                   </div>
                   <!-- /.card-body -->
                 </div>
@@ -85,55 +95,64 @@
 
               <div class="col-md-6">
                 <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title">deActive Category</h3>
+                <form method="post" action="/category/allDeactiveCategory">
+                  <div class="card mb-4">
+                    <div class="card-header">
+                      <div class=" d-flex justify-content-between">
+                        <h3 class="card-title">deActive Category</h3>
+                        <div class="d-flex">
+                          <label>selectAll</label>
+                          <input type="checkbox" id="checkAllDeactive" class="mx-2"/>
+                          <div id="deactiveCategoryBtn">
+                            <button type="submit" value="deActive" name="deActive"><i class="bi bi-arrow-90deg-left"></i></button>
+                            <button type="submit" value="deletAll" name="deletAll"><i class="bi bi-trash-fill"></i></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body p-0">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th></th>
+                            <th style="width: 10px">#</th>
+                            <th>Category Name</th>
+                            <th>CreatedDate</th>
+                            <th>Updated Date</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% index = 1;
+                          allCategory.map((item)=>{
+                              if(!item.status) {%>
+                              <tr>
+                                <td><input type="checkbox" name="ids" value="<%= item.id %>" class="deactiveCategory"></td>
+                                  <td><%= index++ %></td>
+                                  <td><%= item.categoryName %></td>
+                                  <td><%= new Date(item.createdAt).toLocaleDateString() %></td>
+                                  <td><%= new Date(item.updatedAt).toLocaleDateString() %></td>
+                                  <td>
+                                      <div class="d-flex align-items-center justify-content-center">
+                                          <a href="/category/changeCategoryStatus/<%= item.id %>/true" class="nav-link mx-2"><i class="bi bi-arrow-90deg-left"></i></a>
+                                          <a href="/category/deleteCategory/<%= item.id %>" class="nav-link mx-2"><i class="bi bi-trash-fill"></i></a>
+                                          <a href="javscript:void(0)" onclick="updateCategory(`<%= JSON.stringify(item) %>`)" data-bs-toggle="modal" data-bs-target="#updateCategory" class="nav-link mx-2"><i class="bi bi-pencil-square"></i></a>
+                                      </div>
+                                  </td>
+                              </tr>
+                          <% }}) %>
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                    <!-- /.card-body -->
+                    
                   </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <table class="table table-striped">
-                      <thead>
-                        <tr>
-                          <th style="width: 10px">#</th>
-                          <th>Category Name</th>
-                          <th>CreatedDate</th>
-                          <th>Updated Date</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <% index = 1;
-                         allCategory.map((item)=>{
-                            if(!item.status) {%>
-                            <tr>
-                                <td><%= index++ %></td>
-                                <td><%= item.categoryName %></td>
-                                <td><%= new Date(item.createdAt).toLocaleDateString() %></td>
-                                <td><%= new Date(item.updatedAt).toLocaleDateString() %></td>
-                                <td>
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <a href="/category/activateCategory/<%= item.id %>" class="nav-link mx-2"><i class="bi bi-arrow-90deg-left"></i></a>
-                                        <a href="/category/deleteCategory/<%= item.id %>" class="nav-link mx-2"><i class="bi bi-trash-fill"></i></a>
-                                        <a href="javscript:void(0)" onclick="updateCategory(`<%= JSON.stringify(item) %>`)" data-bs-toggle="modal" data-bs-target="#updateCategory" class="nav-link mx-2"><i class="bi bi-pencil-square"></i></a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <% }}) %>
-                        
-                      </tbody>
-                    </table>
-                  </div>
-                  <!-- /.card-body -->
-                  
-                </div>
+                </form>
                 <!-- /.card -->
               </div>
               <!-- /.col -->
-            </div>
-            <div class="text-center">
-              <a href="/category/viewCategory?page=<%= page-1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %>" class="btn btn-primary <%= page <= 0 ?'disabled':'' %>">Prev</a>
-              <span><%= page + 1 %></span>
-              <a href="/category/viewCategory?page=<%= page+1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %>" class="btn btn-primary <%= page >= totalCategoryPage - 1 ?'disabled':'' %>">Next</a>
             </div>
             <!--end::Row-->
           </div>
@@ -157,13 +176,11 @@
                         <!--begin::Body-->
                         <div class="card-body">
                           <div class="row mb-3">
-    
                             <label for="categoryName" class="col-sm-2 col-form-label">Category Name</label>
                             <div class="col-sm-10">
                               <input type="text"  name="categoryName" class="form-control" id="categoryName" />
                             </div>
                           </div>
-    
                         </div>
                         <!--end::Body-->
                     </div>
@@ -183,14 +200,27 @@
       <!--end::App Main-->
      
 
-    <script>
-        function updateCategory(item) {
-            const category = JSON.parse(item);
-            document.querySelector('#id').value = category._id;
-            document.querySelector('#categoryName').value = category.categoryName;
-        }
-    </script>
-
 
 
 <%- include('../Layouts/footer') %>
+
+<script>
+    $("#checkAll").click(function(){
+        $('#deactiveAllBtn').toggleClass('d-none');
+        $('.activeCategory').not(this).prop('checked', this.checked);
+    });
+</script>
+<script>
+    $('#deactiveCategoryBtn').hide();
+    $("#checkAllDeactive").click(function(){
+        $('#deactiveCategoryBtn').toggle();
+        $('.deactiveCategory').not(this).prop('checked', this.checked);
+    });
+</script>
+<script>
+  function updateCategory(item) {
+      const category = JSON.parse(item);
+      document.querySelector('#id').value = category._id;
+      document.querySelector('#categoryName').value = category.categoryName;
+  }
+</script>

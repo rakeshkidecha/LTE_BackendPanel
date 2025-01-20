@@ -1,0 +1,16 @@
+<%- include('header') %>
+
+
+    <main class="p-4">
+        <div class="d-flex align-items-center">
+            <a href="/" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a>
+            / <a href="" class="text-decoration-none text-dark d-inlne-block mx-2"><%= singleNews.title %></a>
+        </div>
+        <div class="mt-4">
+            <h2><%= singleNews.title %></h2>
+            <p><%= singleNews.description %></p>
+        </div>
+    </main>
+    
+
+<%- include('footer') %>

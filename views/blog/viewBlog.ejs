@@ -8,9 +8,9 @@
     <!--begin::Container-->
     <div class="container-fluid">
       <!--begin::Row-->
-      <div class="row">
-        <div class="col-sm-4"><h3 class="mb-0">Blogs</h3></div>
-        <div class="col-sm-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <div><h3 class="mb-0">Blogs</h3></div>
+        <div>
           <form>
             <input
               type="text"
@@ -18,6 +18,7 @@
               value="<%= searchValue %>"
               placeholder="Search here"
             />
+            <input type="date" name="date" value="<%= date ? date.toISOString().split('T')[0] : '' %>" class="mx-2"/>
             <button
               type="submit"
               class="btn btn-primary"
@@ -31,9 +32,11 @@
               style="font-size: 12px"
               ><i class="bi bi-arrow-clockwise"></i
             ></a>
+            <a href="/blog/viewBlog/?sort=1" class="btn btn-primary" style="font-size: 12px"><i class="bi bi-arrow-up"></i></a>
+            <a href="/blog/viewBlog/?sort=-1" class="btn btn-primary" style="font-size: 12px"><i class="bi bi-arrow-down"></i></a>
           </form>
         </div>
-        <div class="col-sm-4">
+        <div>
           <ol class="breadcrumb float-sm-end">
             <li class="breadcrumb-item"><a href="/dashBoard">dashBoard</a></li>
             <li class="breadcrumb-item active" aria-current="page">viewBlog</li>
@@ -52,69 +55,160 @@
       <!--begin::Row-->
       <div class="row">
         <!-- /.col -->
-        <div>
+        <div class="col-md-6">
           <!-- /.card -->
-          <div class="card mb-4">
-            <div class="card-header">
-              <h3 class="card-title">Blogs</h3>
+          <form method="post" action="/blog/deactiveAllBlog">
+            <div class="card mb-4 overflow-scroll">
+              <div class="card-header border-0">
+                <div class="d-flex align-items-center justify-content-between">
+                  <h3 class="card-title">Active Blogs</h3>
+                  <div>
+                    <label for="checkAllActiveBlog">Select All </label>
+                    <input type="checkbox" id="checkAllActiveBlog" class="mx-2">
+                    <button type="submit" class="hideBtn" id="deactiveallBtn"><i class="bi bi-ban"></i></button>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped border-top border-2">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th style="width: 10px">#</th>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>CreatedDate</th>
+                      <th>UpdatedDate</th>
+                      <th>Description</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% activeBlog.map((item,i)=>{ %>
+                    <tr>
+                      <td><input type="checkbox" name="ids" value="<%= item.id %>" class="activeBlog" /></td>
+                      <td><%= i+1 %></td>
+                      <td><%= item.title %></td>
+                      <td><%= item.categoryId.categoryName %></td>
+                      <td>
+                        <%= new Date(item.createdAt).toLocaleDateString() %>
+                      </td>
+                      <td>
+                        <%= new Date(item.updatedAt).toLocaleDateString() %>
+                      </td>
+                      <td><%= item.description %></td>
+                      <td>
+                        <div
+                          class="d-flex align-items-center"
+                        >
+                          <a
+                            href="/blog/changeBlogStatus/<%= item.id %>/false"
+                            class="nav-link mx-2"
+                            ><i class="bi bi-ban"></i></a>
+                          <a
+                            href="javscript:void(0)"
+                            onclick="updateBlog(`<%= JSON.stringify(item) %>`)"
+                            data-bs-toggle="modal"
+                            data-bs-target="#updateBlog"
+                            class="nav-link mx-2"
+                            ><i class="bi bi-pencil-square"></i
+                          ></a>
+                        </div>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
             </div>
-            <!-- /.card-header -->
-            <div class="card-body p-0">
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th style="width: 10px">#</th>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>CreatedDate</th>
-                    <th>UpdatedDate</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% allBlog.map((item,i)=>{ %>
-                  <tr>
-                    <td><%= i+1 %></td>
-                    <td><%= item.title %></td>
-                    <td><%= item.categoryId.categoryName %></td>
-                    <td>
-                      <%= new Date(item.createdAt).toLocaleDateString() %>
-                    </td>
-                    <td>
-                      <%= new Date(item.updatedAt).toLocaleDateString() %>
-                    </td>
-                    <td><%= item.description %></td>
-                    <td>
-                      <div
-                        class="d-flex align-items-center justify-content-center"
-                      >
-                        <a
-                          href="/blog/deleteBlog/<%= item.id %>"
-                          class="nav-link mx-2"
-                          ><i class="bi bi-trash-fill"></i
-                        ></a>
-                        <a
-                          href="javscript:void(0)"
-                          onclick="updateBlog(`<%= JSON.stringify(item) %>`)"
-                          data-bs-toggle="modal"
-                          data-bs-target="#updateBlog"
-                          class="nav-link mx-2"
-                          ><i class="bi bi-pencil-square"></i
-                        ></a>
-                      </div>
-                    </td>
-                  </tr>
-                  <% }) %>
-                </tbody>
-              </table>
-            </div>
-            <!-- /.card-body -->
-          </div>
+          </form>
           <div class="text-center">
-            <a href="/blog/viewBlog?page=<%= page-1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %>" class="btn btn-primary <%= page <= 0 ?'disabled':'' %>">Prev</a>
-            <span><%= page + 1 %></span>
-            <a href="/blog/viewBlog?page=<%= page+1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %>" class="btn btn-primary <%= page > totalPage-1 ?'disabled':'' %>">Next</a>
+            <a href="/blog/viewBlog?activeBlogpage=<%= activeBlogpage-1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %><%= date? '&date='+date:'' %>" class="btn btn-primary <%= activeBlogpage <= 0 ?'disabled':'' %>">Prev</a>
+            <span><%= activeBlogpage + 1 %></span>
+            <a href="/blog/viewBlog?activeBlogpage=<%= activeBlogpage+1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %><%= date? '&date='+date:'' %>" class="btn btn-primary <%= activeBlogpage >= totalActivePage-1 ?'disabled':'' %>">Next</a>
+          </div>
+          <!-- /.card -->
+        </div>
+
+        <!-- deactive blog  -->
+
+        <div class="col-md-6">
+          <!-- /.card -->
+          <form method="post" action="/blog/oprateAllDeactiveBlog">
+            <div class="card mb-4 overflow-scroll">
+              <div class="card-header border-0">
+                <div class="d-flex align-items-center justify-content-between">
+                  <h3 class="card-title">Deactive Blogs</h3>
+                  <div>
+                    <label for="checkAllActiveBlog">Select All </label>
+                    <input type="checkbox" id="checkAllDeactiveBlog" class="mx-2">
+                    <button type="submit" class="hideBtn" value="activeAll" name="activeAll" id="activeAllBtn"><i class="bi bi-arrow-90deg-left"></i></button>
+                    <button type="submit" class="hideBtn" name="deleteAll" value="deleteall" id="deleteAllBtn"><i class="bi bi-trash-fill"></i></button>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body p-0">
+                <table class="table table-striped border-2 border-top">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th style="width: 10px">#</th>
+                      <th>Title</th>
+                      <th>Category</th>
+                      <th>CreatedDate</th>
+                      <th>UpdatedDate</th>
+                      <th>Description</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% deactiveBlog.map((item,i)=>{ %>
+                    <tr>
+                      <td><input type="checkbox" name="ids" value="<%= item.id %>" class="deactiveBlog" /></td>
+                      <td><%= i+1 %></td>
+                      <td><%= item.title %></td>
+                      <td><%= item.categoryId.categoryName %></td>
+                      <td>
+                        <%= new Date(item.createdAt).toLocaleDateString() %>
+                      </td>
+                      <td>
+                        <%= new Date(item.updatedAt).toLocaleDateString() %>
+                      </td>
+                      <td><%= item.description %></td>
+                      <td>
+                        <div
+                          class="d-flex align-items-center justify-content-center"
+                        >
+                          <a href="/blog/changeBlogStatus/<%= item.id %>/true" class="nav-link mx-2"><i class="bi bi-arrow-90deg-left"></i></a>
+                          <a
+                            href="/blog/deleteBlog/<%= item.id %>"
+                            class="nav-link mx-2"
+                            ><i class="bi bi-trash-fill"></i></a>
+                          <a
+                            href="javscript:void(0)"
+                            onclick="updateBlog(`<%= JSON.stringify(item) %>`)"
+                            data-bs-toggle="modal"
+                            data-bs-target="#updateBlog"
+                            class="nav-link mx-2"
+                            ><i class="bi bi-pencil-square"></i
+                          ></a>
+                        </div>
+                      </td>
+                    </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+          </form>
+          <div class="text-center">
+            <a href="/blog/viewBlog?deactiveBlogPage=<%= deactiveBlogPage-1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %><%= date? '&date='+date:'' %>" class="btn btn-primary <%= deactiveBlogPage <= 0 ?'disabled':'' %>">Prev</a>
+            <span><%= deactiveBlogPage + 1 %></span>
+            <a href="/blog/viewBlog?deactiveBlogPage=<%= deactiveBlogPage+1 %><%= searchValue != ''? '&searchValue='+searchValue:'' %><%= date? '&date='+date:'' %>" class="btn btn-primary <%= deactiveBlogPage >= totalDeactivePage-1 ?'disabled':'' %>">Next</a>
           </div>
           <!-- /.card -->
         </div>
@@ -222,6 +316,20 @@
 </main>
 <!--end::App Main-->
 
+<%- include('../Layouts/footer') %>
+<script>
+  $("#checkAllActiveBlog").click(function(){
+      $('#deactiveallBtn').toggleClass('hideBtn')
+      $('.activeBlog').not(this).prop('checked', this.checked);
+  });
+
+  $("#checkAllDeactiveBlog").click(function(){
+      $('#activeAllBtn').toggleClass('hideBtn')
+      $('#deleteAllBtn').toggleClass('hideBtn')
+      $('.deactiveBlog').not(this).prop('checked', this.checked);
+  });
+</script>
+
 <script>
   function updateBlog(item) {
     const blog = JSON.parse(item);
@@ -235,5 +343,3 @@
             `;
   }
 </script>
-
-<%- include('../Layouts/footer') %>

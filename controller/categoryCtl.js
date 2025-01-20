@@ -11,7 +11,7 @@ module.exports.addCategory = async (req,res)=>{
 
 module.exports.insertCategory= async(req,res)=>{
     try {
-
+        
         const addedCategory = await Category.create(req.body);
 
         if(addedCategory){
@@ -32,49 +32,39 @@ module.exports.viewCategory = async(req,res)=>{
     try {
 
         let searchValue = '';
-        let perPageData = 4;
-        let page = 0;
+        let date;
+        let sortType ;
 
         if(req.query.searchValue){
             searchValue = req.query.searchValue;
         }
-        if(req.query.page){
-            page = req.query.page;
+
+        if(req.query.date){
+            date = new Date(req.query.date);
         }
 
-        const allCategory = await Category.find({categoryName:{$regex : searchValue,$options:'i'}}).skip(perPageData*page).limit(perPageData);
+        if(req.query.sortType){
+            sortType = req.query.sortType
+        }
 
-        const totalCategory = await Category.find({categoryName:{$regex : searchValue,$options:'i'}}).countDocuments();
+        const allCategory = await Category.find({
+            categoryName:{$regex : searchValue,$options:'i'},
+            ...(date && {createdAt : {$gte:new Date(date).setHours(0,0,0,0),$lte:new Date(date).setHours(23, 59, 59, 999)}})
+        }).sort({...(sortType && {categoryName:parseInt(sortType)})});
 
-        let totalCategoryPage = Math.ceil(totalCategory / perPageData);
-
-        return res.render('category/viewCategory',{allCategory,searchValue,page:parseInt(page),totalCategoryPage});
+    
+        return res.render('category/viewCategory',{allCategory,searchValue,date});
     } catch (err) {
         console.log(err);
         return res.redirect('back');
     }
 }
 
-module.exports.deactiveCategory = async (req,res)=>{
+module.exports.changeCategoryStatus = async (req,res)=>{
     try {
-        const deactivedCategory = await Category.findByIdAndUpdate(req.params.id,{status:false});
-        if(deactivedCategory){
-            console.log("Category deactived successFully..");
-            return res.redirect('back');
-        }else{
-            console.log("Faild to deactive Category");
-            return res.redirect('back');
-        }
-    } catch (err) {
-        console.log(err);
-        return res.redirect('back');
-    }
-}
-
-module.exports.activateCategory = async (req,res)=>{
-    try {
-        const deactivedCategory = await Category.findByIdAndUpdate(req.params.id,{status:true});
-        if(deactivedCategory){
+        const {id,status} = req.params;
+        const changeStatusCategory = await Category.findByIdAndUpdate(id,{status:status});
+        if(changeStatusCategory){
             console.log("Category deactived successFully..");
             return res.redirect('back');
         }else{
@@ -113,6 +103,52 @@ module.exports.editCategory = async(req,res)=>{
             console.log("Faild to update category");
             return res.redirect('back');
         }
+    } catch (err) {
+        console.log(err);
+        return res.redirect('back');
+    }
+}
+
+module.exports.deactiveAll = async(req,res)=>{
+    try {
+        console.log(req.body);
+        const deactiveAllCategory = await Category.updateMany({_id:{$in:req.body.ids}},{status:false});
+        if(deactiveAllCategory){
+            console.log("Deactive all category..")
+            return res.redirect('back');
+        }else{
+            console.log("Faild to deactive");
+            return res.redirect('back');
+        }
+    } catch (err) {
+        console.log(err);
+        return res.redirect('back');
+    }
+}
+
+module.exports.allDeactiveCategory = async (req,res)=>{
+    try {
+        console.log(req.body);
+        if(req.body.deActive){
+            const activeAllCategory = await Category.updateMany({_id:{$in:req.body.ids}},{status:true});
+            if(activeAllCategory){
+                console.log("active all  category..");
+                return res.redirect('back');
+            }else{
+                console.log("faild to active all category");
+                return res.redirect('back');
+            }
+        }else{
+            const deleteAllCategory = await Category.deleteMany({_id:{$in:req.body.ids}});
+            if(deleteAllCategory){
+                console.log("Delete All Category..");
+                return res.redirect('back');
+            }else{
+                console.log("Falid to delete all category");
+                return res.redirect('back');
+            }
+        }
+
     } catch (err) {
         console.log(err);
         return res.redirect('back');

@@ -1,0 +1,76 @@
+/* header */
+nav .navbar-brand{
+    width: 240px;
+}
+nav form .btn{
+    outline: 2px solid #CB0F22;
+    transition: all .3s linear;
+    padding: 4px 10px !important;
+}
+nav form .btn:hover{
+    background-color: #CB0F22;
+    color: white;
+}
+nav form .form-control{
+    border: 2px solid gray;
+    padding: 4px 10px !important;
+}
+nav form .form-control:focus {
+    box-shadow:none;
+    border:2px solid #CB0F22 !important;
+}
+.dropdown-menu[data-bs-popper]{
+    right: 0 !important;
+    left: auto;
+}
+.dropdown .btn{
+    background-color: #CB0F22 !important;
+    color: white !important;
+}
+
+/* aside  */
+
+aside{
+    background-color: #ECEFF2;
+    width: 240px;
+    top: 57px;
+}
+aside ul li a{
+    position: relative;
+    transition: all 0.3s linear !important;
+} 
+aside ul li a:hover{
+    color: #CB0F22 !important;
+}
+.activeCategory{
+    color: #CB0F22 !important;
+    font-weight: 500;
+}
+aside ul li a::before{
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 0%;
+    height: 2px;
+    background-color: #CB0F22;
+    transition: all 0.3s linear;
+}
+.activeCategory::before{
+    width: 100%;
+}
+aside ul li a:hover::before{
+    width: 100%;
+}
+/* main  */
+main{
+    width: calc(100% - 240px);
+    margin-left: auto;
+}
+.newsItem{
+    cursor: pointer;
+}
+/* footer  */
+footer{
+    background-color: rgb(28, 27, 27);
+}

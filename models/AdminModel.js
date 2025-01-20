@@ -40,7 +40,7 @@ const AdminSchema = mongoose.Schema({
     },
     date:{
         type:String,
-        default:moment().format('DD-MM-YYYY')
+        default:moment().format('YYYY-MM-DD')
     }
 })
 

@@ -1,0 +1,23 @@
+
+<%- include('header') %>
+
+
+    <main class="p-4">
+        <div class="d-flex align-items-center">
+            <a href="" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a>
+            / <a href="" class="text-decoration-none text-dark d-inlne-block mx-2">Category</a>
+        </div>
+        <% allBlog.map((item)=>{ %>
+            <a href="/singleNews/<%= item.id %>" class="nav-link">
+                <div class="card my-3 shadow-sm newsItem">
+                    <div class="card-body">
+                        <h3><%= item.title %></h3>
+                        <p><%= item.description %></p>
+                    </div>
+                </div>
+            </a>
+        <% }) %>
+    </main>
+    
+
+<%- include('footer') %>

@@ -4,6 +4,7 @@ const Cryptr = require('cryptr');
 const cryptr = new Cryptr('secretKeysdskjghsdgjh')
 const path = require('path');
 const fs = require('fs');
+const moment =  require('moment');
 
 module.exports.dashBoard = async (req,res)=>{
     try {
@@ -18,7 +19,7 @@ module.exports.dashBoard = async (req,res)=>{
 module.exports.addAdmin = async(req,res)=>{
     try {
       
-            return res.render('admin/addAdmin');
+        return res.render('admin/addAdmin');
        
     } catch (err) {
         console.log("Something wrong",err);
@@ -53,8 +54,53 @@ module.exports.insertAdmin = async (req,res)=>{
 
 module.exports.viewAdmin = async (req,res)=>{
     try {
-        const allAdminRecord = await Admin.find();
-        return res.render('admin/viewAdmin',{allAdminRecord});
+
+        let searchValue = '';
+        let page = 0;
+        let perPageData = 4;
+        let sort,date;
+
+        if(req.query.search){
+            searchValue = req.query.search;
+        }
+
+        if(req.query.page){
+            page = req.query.page;
+        }
+
+        if(req.query.sort){
+            sort = parseInt(req.query.sort);
+        }
+
+        if(req.query.date){
+            date = req.query.date;
+        }
+
+        const allAdminRecord = await Admin.find({
+            ...(date&&{date:{$gte:date,$lte:date}}),
+            $or:[
+                {name:{$regex:searchValue,$options:'i'}},
+                {gender:{$regex:searchValue,$options:'i'}},
+                {hobby:{$regex:searchValue,$options:'i'}},
+                {city:{$regex:searchValue,$options:'i'}},
+                {about:{$regex:searchValue,$options:'i'}},
+            ]
+        }).sort({...(sort&&{name:sort})}).skip(perPageData*page).limit(perPageData);
+
+        const allAdminCount = await Admin.find({
+            ...(date&&{date:{$gte:date,$lte:date}}),
+            $or:[
+                {name:{$regex:searchValue,$options:'i'}},
+                {gender:{$regex:searchValue,$options:'i'}},
+                {hobby:{$regex:searchValue,$options:'i'}},
+                {city:{$regex:searchValue,$options:'i'}},
+                {about:{$regex:searchValue,$options:'i'}},
+            ]
+        }).countDocuments();
+
+        const totalAdminPage = Math.ceil(allAdminCount/perPageData);
+
+        return res.render('admin/viewAdmin',{allAdminRecord,searchValue,page:parseInt(page),totalAdminPage,sort,date});
       
     } catch (err) {
         console.log("Something wrong",err);
@@ -142,6 +188,32 @@ module.exports.editAdmin = async (req,res)=>{
     }
 }
 
+module.exports.deleteAllAdmin = async(req,res)=>{
+    try {
+        console.log(req.body)
+        const allDeleteAdmin = await Admin.find({_id:{$in:req.body.ids}});
+        allDeleteAdmin.map(async (item)=>{
+            try {
+                const deletePath = path.join(__dirname,'..',item.admin_image);
+                await fs.unlinkSync(deletePath);
+            } catch (err) {
+                console.log("Image not found");
+            }
+        })
+
+        const deletedAdmins = await Admin.deleteMany({_id:{$in:req.body.ids}});
+        if(deletedAdmins){
+            console.log("delete all admins..");
+            return res.redirect('back');
+        }else{
+            console.log("faild to delete admins");
+            return res.redirect('back');
+        }
+    } catch (err) {
+        console.log("Something wrong",err);
+        return res.redirect('back');
+    }
+}
 
 
 // login system -------------------
@@ -173,7 +245,7 @@ module.exports.logOut = async(req,res)=>{
             if(err){
                 return false;
             }
-            return res.redirect('/');
+            return res.redirect('/login');
         })
     } catch (err) {
         console.log("Something wrong",err);
@@ -232,7 +304,7 @@ module.exports.verifyNewPassword = async (req,res)=>{
             if(updatePassword){
                 console.log("Password Changed Successfully....");
                 res.clearCookie('adminData');
-                return res.redirect('/');
+                return res.redirect('/login');
             }else{
                 console.log("Password Changed faild...");
                 return res.redirect('back');
@@ -370,7 +442,7 @@ module.exports.setNewPassword = async (req,res)=>{
 
         if(!req.cookies.adminEmail){
             console.log("Something Wrong Please try again");
-            return res.redirect('/');
+            return res.redirect('/login');
         }
 
         const adminEmail = JSON.parse(cryptr.decrypt(req.cookies.adminEmail));
@@ -386,7 +458,7 @@ module.exports.setNewPassword = async (req,res)=>{
                 if(updatePassword){
                     console.log("Password Updated successfully..");
                     res.clearCookie('adminEmail');
-                    return res.redirect('/');
+                    return res.redirect('/login');
                 }else{
                     console.log("Password Updation Faild...");
                     return res.redirect('back');
