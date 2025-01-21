@@ -1,5 +1,7 @@
 const Blog =  require('../models/BlogModel');
 const Category = require('../models/CategoryModel');
+const path = require('path');
+const fs = require('fs');
 
 module.exports.addBlog = async (req,res)=>{
     try {
@@ -13,6 +15,12 @@ module.exports.addBlog = async (req,res)=>{
 
 module.exports.insertBlog = async (req,res)=>{
     try {
+        let imagePath = '';
+        if(req.file){
+            imagePath = Blog.imgPath+'/'+req.file.filename;
+        }
+        req.body.blog_image = imagePath;
+
         const addedBlog = await Blog.create(req.body);
         if(addedBlog){
             console.log("Blog Add Successfully");
@@ -119,6 +127,15 @@ module.exports.viewBlog = async(req,res)=>{
 
 module.exports.deleteBlog = async(req,res)=>{
     try {
+
+        const singleBlog = await Blog.findById(req.params.id);
+        try {
+            const deleteImagePath = path.join(__dirname,'..',singleBlog.blog_image);
+            await fs.unlinkSync(deleteImagePath);
+        } catch (err) {
+            console.log("Image not Found",err);
+        }
+
         const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
         if(deletedBlog){
             console.log("Blog Deleted Successfully..");
@@ -133,8 +150,33 @@ module.exports.deleteBlog = async(req,res)=>{
     }
 }
 
+module.exports.updateBlog = async(req,res)=>{
+    try {
+        console.log(req.params);
+        const singleBlog = await Blog.findById(req.params.id);
+        return res.json(singleBlog);
+    } catch (err) {
+        console.log("Something Wrong",err)
+    }
+}
+
 module.exports.editBlog = async(req,res)=>{
     try {
+        const singleBlog = await Blog.findById(req.body.id);
+        if(req.file){
+            try {
+                const deleteImagePath = path.join(__dirname,'..',singleBlog.blog_image);
+                await fs.unlinkSync(deleteImagePath);
+            } catch (err) {
+                console.log("Image not Found",err);
+            }
+
+            let newImagePath = Blog.imgPath+'/'+req.file.filename;
+            req.body.blog_image = newImagePath;
+        }else{
+            req.body.blog_image = singleBlog.blog_image;
+        }
+
         const updatedBlog = await Blog.findByIdAndUpdate(req.body.id,req.body);
         if(updatedBlog){
             console.log("Blog Update successfully");
@@ -184,7 +226,6 @@ module.exports.deactiveAllBlog = async (req,res)=>{
 
 module.exports.oprateAllDeactiveBlog = async (req,res)=>{
     try {
-        console.log(req.body);
         if(req.body.activeAll){
             const activateBlogs = await Blog.updateMany({_id:{$in:req.body.ids}},{status:true});
             if(activateBlogs){
@@ -195,6 +236,18 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
                 return res.redirect('back')
             }
         }else{
+
+            const deactiveAllBlog = await Blog.find({_id:{$in:req.body.ids}});
+
+            deactiveAllBlog.map(async(item)=>{
+                try {
+                    const deleteImagePath = path.join(__dirname,'..',item.blog_image);
+                    await fs.unlinkSync(deleteImagePath);
+                } catch (err) {
+                    console.log("image not found");
+                }
+            });
+ 
             const deletedBlog = await Blog.deleteMany({_id:{$in:req.body.ids}});
             if(deletedBlog){
                 console.log("Deleted blogs...");

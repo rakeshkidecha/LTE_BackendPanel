@@ -3,13 +3,32 @@
 
     <main class="p-4">
         <div class="d-flex align-items-center">
-            <a href="/" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a>
+            <a href="/" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a> /
+            <a href="#" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory"><%= singleNews.categoryId.categoryName %></a>
             / <a href="" class="text-decoration-none text-dark d-inlne-block mx-2"><%= singleNews.title %></a>
         </div>
-        <div class="mt-4">
-            <h2><%= singleNews.title %></h2>
-            <p><%= singleNews.description %></p>
+        <div class="row mt-4 g-4">
+            <div class="col-md-6">
+                <img src="<%= singleNews.blog_image %>" alt="coverImage" alt="coverImage" width="100%">
+                <h2><%= singleNews.title %></h2>
+            </div>
+            <div class="col-md-6">
+                <div class="border border-2 border-secondary p-2">
+                    <h5 class="mb-3 mt-1">Recent Blogs</h5>
+                    <% recentBlog.map((item)=>{ %>  
+                        <a href="/singleNews/<%= item.id %>" class="nav-link">
+                            <div class="d-flex my-2">
+                                <img src="<%= item.blog_image %>" alt="coverImage" alt="coverImage" width="140px" />
+                                <div class="ms-2">
+                                    <h5><%= item.title %></h5>
+                                </div>
+                            </div>
+                        </a>
+                    <% }) %>
+                </div>
+            </div>
         </div>
+        <p style="text-indent:70px;"><%= singleNews.description %></p>
     </main>
     
 
