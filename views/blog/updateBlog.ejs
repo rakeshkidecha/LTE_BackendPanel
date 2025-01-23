@@ -47,7 +47,8 @@
                   <div class="card-header"><div class="card-title">Add Blog</div></div>
                   <!--end::Header-->
                   <!--begin::Form-->
-                  <form method="post" action="/blog/insertBlog" enctype="multipart/form-data">
+                  <form method="post" action="/blog/editBlog" enctype="multipart/form-data">
+                    <input type="hidden" value="<%= singleBlog.id %>" name="id" />
                     <!--begin::Body-->
                     <div class="card-body">
                         <div class="row mb-3">
@@ -56,8 +57,8 @@
                                 <select class="form-select" name="categoryId" id="validationCustom04" required>
                                     <option value="">-- Select Category</option>
                                     <% allCategory.map((item)=>{ %>
-                                        <option value="<%= item.id %>"><%= item.categoryName %></option>
-                                      <% }) %>
+                                        <option value="<%= item.id %>" <%= singleBlog.categoryId == item.id?'selected':'' %>><%= item.categoryName %></option>
+                                    <% }) %>
                                 </select>
                             </div>
                         </div>
@@ -65,7 +66,7 @@
                       <div class="row mb-3">
                         <label for="inputEmail3" class="col-sm-3 col-form-label">Title</label>
                         <div class="col-sm-9">
-                          <input type="text" name="title" class="form-control" id="inputEmail3" />
+                          <input type="text" name="title" class="form-control" value="<%= singleBlog.title %>" id="inputEmail3" />
                         </div>
                       </div>
 
@@ -73,13 +74,14 @@
                         <label for="inputEmail3" class="col-sm-3 col-form-label">Image</label>
                         <div class="col-sm-9">
                           <input type="file" name="blog_image" class="form-control" id="inputEmail3" />
+                          <img src="<%= singleBlog.blog_image %>" alt="coverIamage" title="coverIamage" width="140px" class="img-fluid my-3">
                         </div>
                       </div>
 
                       <div class="row mb-3">
                         <label for="inputEmail3" class="col-sm-3 col-form-label">Description</label>
                         <div class="col-sm-9">
-                            <textarea name="description" class="form-control"></textarea>
+                            <textarea name="description" class="form-control"><%- singleBlog.description %></textarea>
                         </div>
                       </div>
 
@@ -87,7 +89,7 @@
                     <!--end::Body-->
                     <!--begin::Footer-->
                     <div class="card-footer text-center">
-                      <button type="submit" class="btn btn-primary">Add</button>
+                      <button type="submit" class="btn btn-primary">Update</button>
                     </div>
                     <!--end::Footer-->
                   </form>

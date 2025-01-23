@@ -93,6 +93,10 @@ main{
 .pagination .page-link:hover,.sorting .btn:hover{
     background-color: #990917;
 }
+
+.tox .tox-dialog{
+    z-index: 99 !important;
+}
 /* footer  */
 footer{
     background-color: rgb(28, 27, 27);

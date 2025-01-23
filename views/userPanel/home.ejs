@@ -6,7 +6,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <div>
                 <a href="" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a>
-                / <a href="" class="text-decoration-none text-dark d-inlne-block mx-2">Category</a>
+                / 
             </div>
         </div>
         <div class="allBlog">
@@ -20,7 +20,7 @@
                                 <div class="col-md-8">
                                 <div class="card-body position-relative">
                                     <h4><%= item.title %></h4>
-                                    <p><%= item.description.substr(0,200) %> .....</p>
+                                    <p><%- item.description.substr(0,200) %> .....</p>
                                     <p class="text-secondary z-1 position-relative" style="font-size: 14px;"><%= item.time %> </p>
                                 </div>
                             </div>

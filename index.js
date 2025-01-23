@@ -8,6 +8,9 @@ const passport = require('passport');
 const session = require('express-session');
 const localStategy = require('./config/passport-local-stategy');
 
+const flash = require('connect-flash');
+const flashMassage = require('./config/flashMassage');
+
 const app = express();
 
 app.set('view engine','ejs');
@@ -31,6 +34,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(passport.setAuthAdminData);
+
+app.use(flash());
+app.use(flashMassage.setFlash);
 
 
 app.use('/',require('./routes/adminRoutes'));

@@ -24,8 +24,14 @@ module.exports.home = async (req,res)=>{
 
         const allCategory = await Category.find({status:true});
 
+        let catId;
+        if(req.query.catId){
+            catId=req.query.catId;
+        }
+
         const allBlog = await Blog.find({
             status:true,
+            ...(catId&&{categoryId:catId}),
             title:{$regex:searchValue,$options:'i'},
         }).sort({...(sort&&{[sortType]:sort})}).skip(perPageBlog*page).limit(perPageBlog).populate('categoryId').exec();
 
@@ -48,6 +54,7 @@ module.exports.home = async (req,res)=>{
             searchValue,
             page : parseInt(page),
             totalPage,
+            totalBlog,
             sortType,
             sort
         });
@@ -62,9 +69,9 @@ module.exports.singleNews = async (req,res)=>{
         const reqPath =(req.url).substr(0,11);
         const allCategory = await Category.find({status:true});
         const singleNews = await Blog.findById({_id:req.params.id}).populate('categoryId').exec();
-        console.log(singleNews);
         const recentBlog = await Blog.find({status:true}).sort({_id:-1}).limit(5);
-        return res.render('userPanel/singleNews',{allCategory,singleNews,reqPath,recentBlog})
+        const totalBlog = await Blog.find({status:true}).countDocuments();
+        return res.render('userPanel/singleNews',{allCategory,singleNews,reqPath,recentBlog,totalBlog})
     } catch (err) {
         console.log(err);
         return res.redirect('back');

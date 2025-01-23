@@ -23,6 +23,9 @@ module.exports.insertBlog = async (req,res)=>{
 
         const addedBlog = await Blog.create(req.body);
         if(addedBlog){
+            const findCategory = await Category.findById(addedBlog.categoryId);
+            findCategory.blogIds.push(addedBlog._id);
+            await Category.findByIdAndUpdate(addedBlog.categoryId,findCategory);
             console.log("Blog Add Successfully");
             return res.redirect('back');
         }else{
@@ -136,6 +139,10 @@ module.exports.deleteBlog = async(req,res)=>{
             console.log("Image not Found",err);
         }
 
+        const singleCategory = await Category.findById(singleBlog.categoryId);
+        const index = singleCategory.blogIds.indexOf(singleBlog._id);
+        singleCategory.blogIds.splice(index,1);
+        await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
         const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
         if(deletedBlog){
             console.log("Blog Deleted Successfully..");
@@ -152,9 +159,9 @@ module.exports.deleteBlog = async(req,res)=>{
 
 module.exports.updateBlog = async(req,res)=>{
     try {
-        console.log(req.params);
         const singleBlog = await Blog.findById(req.params.id);
-        return res.json(singleBlog);
+        const allCategory = await Category.find({status:true});
+        return res.render('blog/updateBlog',{singleBlog,allCategory});
     } catch (err) {
         console.log("Something Wrong",err)
     }
@@ -176,11 +183,18 @@ module.exports.editBlog = async(req,res)=>{
         }else{
             req.body.blog_image = singleBlog.blog_image;
         }
+        const singleCategory = await Category.findById(singleBlog.categoryId);
+        const index = singleCategory.blogIds.indexOf(singleBlog._id);
+        singleCategory.blogIds.splice(index,1);
+        await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
 
         const updatedBlog = await Blog.findByIdAndUpdate(req.body.id,req.body);
         if(updatedBlog){
+            const newCategory = await Category.findById(req.body.categoryId);
+            newCategory.blogIds.push(this.updateBlog._id);
+            await Category.findByIdAndUpdate(req.body.categoryId,newCategory);
             console.log("Blog Update successfully");
-            return res.redirect('back');
+            return res.redirect('/blog/viewBlog');
         }else{
             console.log("Faild to update Blog");
             return res.redirect('back');
@@ -194,14 +208,21 @@ module.exports.editBlog = async(req,res)=>{
 module.exports.changeBlogStatus = async (req,res)=>{
     try {
         const {id,statusType} = req.params;
-        const changedBlogStatus = await Blog.findByIdAndUpdate(id,{status:statusType});
-        if(changedBlogStatus){
-            console.log("Blog statuse changed..");
-            return res.redirect('back');
+        const singleBlog = await Blog.findById(id).populate('categoryId').exec();
+        if(singleBlog.categoryId.status){
+            const changedBlogStatus = await Blog.findByIdAndUpdate(id,{status:statusType});
+            if(changedBlogStatus){
+                console.log("Blog statuse changed..");
+                return res.redirect('back');
+            }else{
+                console.log("Faild to chang blog status");
+                return res.redirect('back');
+            }
         }else{
-            console.log("Faild to chang blog status");
+            console.log("This Blog Category is not active");
             return res.redirect('back');
         }
+        
     } catch (err) {
         console.log(err);
         return res.redirect('back');
@@ -227,7 +248,15 @@ module.exports.deactiveAllBlog = async (req,res)=>{
 module.exports.oprateAllDeactiveBlog = async (req,res)=>{
     try {
         if(req.body.activeAll){
-            const activateBlogs = await Blog.updateMany({_id:{$in:req.body.ids}},{status:true});
+
+            const alldeActiveBlog = await Blog.find({_id:{$in:req.body.ids}}).populate('categoryId').exec();
+            const deactivateBlogsIds = alldeActiveBlog.map((item)=>{
+                if(item.categoryId.status){
+                    return item._id;
+                }
+            });
+
+            const activateBlogs = await Blog.updateMany({_id:{$in:deactivateBlogsIds}},{status:true});
             if(activateBlogs){
                 console.log("Activate all blogs");
                 return res.redirect('back');
@@ -246,6 +275,10 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
                 } catch (err) {
                     console.log("image not found");
                 }
+                const singleCategory = await Category.findById(item.categoryId);
+                const index = singleCategory.blogIds.indexOf(item._id);
+                singleCategory.blogIds.splice(index,1);
+                await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
             });
  
             const deletedBlog = await Blog.deleteMany({_id:{$in:req.body.ids}});

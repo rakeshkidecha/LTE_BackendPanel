@@ -9,9 +9,10 @@ const CategorySchema= mongoose.Schema({
         type : Boolean,
         default:true
     },
-    blogIds:{
-        type: Array,
-    }
+    blogIds:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Blog',
+    }]
 },{timestamps:true});
 
 

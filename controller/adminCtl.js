@@ -5,10 +5,24 @@ const cryptr = new Cryptr('secretKeysdskjghsdgjh')
 const path = require('path');
 const fs = require('fs');
 const moment =  require('moment');
+const Blog = require('../models/BlogModel');
+const Category = require('../models/CategoryModel');
 
 module.exports.dashBoard = async (req,res)=>{
     try {
-        return res.render('admin/dashboard');
+        const totalBlog = await Blog.find({status:true}).countDocuments();
+        const totalCategory =await Category.find({status:true}).countDocuments();
+
+        const allCategory = await Category.find({status:true});
+
+        const lables = allCategory.map((item)=>item.categoryName);
+        const values = allCategory.map((item)=>item.blogIds.length);
+        return res.render('admin/dashboard',{
+            totalBlog,
+            totalCategory,
+            lables,
+            values
+        });
        
     } catch (err) {
         console.log("Something wrong",err);

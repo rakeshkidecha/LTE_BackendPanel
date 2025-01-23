@@ -33,9 +33,19 @@
   integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
   crossorigin="anonymous"
 ></script>
-<!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
+
+<!-- chart js  -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!--end chart js  -->
+
 <script src="/js/adminlte.js"></script>
+
+<!-- noty alert  -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- end noty alert  -->
+<!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
 <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+
 <script>
   const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
   const Default = {
@@ -86,64 +96,6 @@
   crossorigin="anonymous"
 ></script>
 <!-- ChartJS -->
-<script>
-  // NOTICE!! DO NOT USE ANY OF THIS JAVASCRIPT
-  // IT'S ALL JUST JUNK FOR DEMO
-  // ++++++++++++++++++++++++++++++++++++++++++
-
-  const sales_chart_options = {
-    series: [
-      {
-        name: 'Digital Goods',
-        data: [28, 48, 40, 19, 86, 27, 90],
-      },
-      {
-        name: 'Electronics',
-        data: [65, 59, 80, 81, 56, 55, 40],
-      },
-    ],
-    chart: {
-      height: 300,
-      type: 'area',
-      toolbar: {
-        show: false,
-      },
-    },
-    legend: {
-      show: false,
-    },
-    colors: ['#0d6efd', '#20c997'],
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: 'smooth',
-    },
-    xaxis: {
-      type: 'datetime',
-      categories: [
-        '2023-01-01',
-        '2023-02-01',
-        '2023-03-01',
-        '2023-04-01',
-        '2023-05-01',
-        '2023-06-01',
-        '2023-07-01',
-      ],
-    },
-    tooltip: {
-      x: {
-        format: 'MMMM yyyy',
-      },
-    },
-  };
-
-  const sales_chart = new ApexCharts(
-    document.querySelector('#revenue-chart'),
-    sales_chart_options,
-  );
-  sales_chart.render();
-</script>
 
 <!-- jsvectormap -->
 <script
@@ -264,6 +216,29 @@
   sparkline3.render();
 </script>
 <!--end::Script-->
+<!-- noty alert script  -->
+ <script>
+  '<% if(locals.flash.success.length > 0 ){ %>'
+    new Noty({
+        type: 'success',
+        layout: 'topCenter',
+        text: '<%= locals.flash.success %>',
+        theme:'metroui',
+        timeout:1000,
+    }).show();
+  '  <% } %>  '
+  '<% if(locals.flash.error.length > 0 ){ %>'
+    new Noty({
+        type: 'error',
+        layout: 'topCenter',
+        text: '<%= locals.flash.error %>',
+        theme:'metroui',
+        timeout:1000,
+    }).show();
+  '  <% } %>  '
+ </script>
+<!--end noty alert script  -->
+
 </body>
 <!--end::Body-->
 </html>

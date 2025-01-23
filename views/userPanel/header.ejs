@@ -63,9 +63,9 @@
     <aside class="position-absolute left-0 bottom-0">
         <div>
             <ul class="list-unstyled px-4 ">
-                <li class=" mt-4"><a href="#" class="nav-link py-2 activeCategory">All News</a></li>
+                <li class=" mt-4"><a href="/" class="nav-link py-2 activeCategory">All News <%= totalBlog %></a></li>
                 <% allCategory.map((item)=>{ %>
-                    <li class=""><a href="#" class="nav-link py-2"><%= item.categoryName %></a></li>
+                    <li><a href="/?catId=<%= item.id %>" class="nav-link py-2"><%= item.categoryName %> <span><%= item.blogIds.length %></span></a></li>
                 <% }) %>
             </ul>
         </div>
