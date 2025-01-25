@@ -17,7 +17,7 @@ router.use('/blog',passport.checkLoginAdmin,require('./blogRoutes'));
 
 router.get('/login',AdminCtl.login);
 
-router.post('/checkLogin',passport.authenticate('local',{failureRedirect:'/login'}),AdminCtl.checkLogin);
+router.post('/checkLogin',passport.authenticate('admin_strategy',{failureRedirect:'/login'}),AdminCtl.checkLogin);
 
 router.get('/logOut',AdminCtl.logOut);
 

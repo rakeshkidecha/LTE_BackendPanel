@@ -221,22 +221,22 @@
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img
-                  src="<%= locals.adminData.admin_image %>"
+                  src="<%= locals.adminData._doc.admin_image %>"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
-                <span class="d-none d-md-inline"><%= locals.adminData.name %></span>
+                <span class="d-none d-md-inline"><%= locals.adminData._doc.name %></span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
                 <li class="user-header text-bg-primary">
                   <img
-                    src="<%= locals.adminData.admin_image %>"
+                    src="<%= locals.adminData._doc.admin_image %>"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
                   <p>
-                    <%= locals.adminData.name %>
+                    <%= locals.adminData._doc.name %>
                     <small>Member since Nov. 2023</small>
                   </p>
                 </li>

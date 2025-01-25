@@ -73,8 +73,10 @@ module.exports.changeCategoryStatus = async (req,res)=>{
         const {id,status} = req.params;
         const changeStatusCategory = await Category.findByIdAndUpdate(id,{status:status});
         if(changeStatusCategory){
-            const updatedCategory = await Category.findById(changeStatusCategory.id);
-            await Blog.updateMany({_id:{$in:updatedCategory.blogIds}},{status:status})
+            if(status=='false'){
+                const updatedCategory = await Category.findById(changeStatusCategory.id);
+                await Blog.updateMany({_id:{$in:updatedCategory.blogIds}},{status:status})
+            }
             console.log("Category deactived successFully..");
             res.locals.flash = req.flash('success',"Category deactived successFully..");
             return res.redirect('back');

@@ -28,8 +28,9 @@ app.use(session({
     resave:false,
     cookie:{
       maxAge:60*60*1000  
-    }
-}))
+    } 
+}));
+
 
 app.use(passport.initialize());
 app.use(passport.session());

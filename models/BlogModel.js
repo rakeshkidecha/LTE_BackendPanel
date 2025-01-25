@@ -26,6 +26,10 @@ const BlogSchema = mongoose.Schema({
         type:Boolean,
         default:true
     },
+    commentIds:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Comment'
+    }]
 },{timestamps:true})
 
 
