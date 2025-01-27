@@ -1,5 +1,6 @@
 const Blog =  require('../models/BlogModel');
 const Category = require('../models/CategoryModel');
+const Comment = require('../models/commentModel');
 const path = require('path');
 const fs = require('fs');
 
@@ -8,6 +9,7 @@ module.exports.addBlog = async (req,res)=>{
         const allCategory = await Category.find({status:true});
         return res.render('blog/addBlog',{allCategory});
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -27,12 +29,15 @@ module.exports.insertBlog = async (req,res)=>{
             findCategory.blogIds.push(addedBlog._id);
             await Category.findByIdAndUpdate(addedBlog.categoryId,findCategory);
             console.log("Blog Add Successfully");
+            res.locals.flash = req.flash('success',"Blog Add Successfully");
             return res.redirect('back');
         }else{
+            res.locals.flash = req.flash('error',"Faild to add blog");
             console.log("Faild to add Blog");
             return res.redirect('back');
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -123,6 +128,7 @@ module.exports.viewBlog = async(req,res)=>{
             date
         });
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -137,6 +143,7 @@ module.exports.deleteBlog = async(req,res)=>{
             await fs.unlinkSync(deleteImagePath);
         } catch (err) {
             console.log("Image not Found",err);
+            res.locals.flash = req.flash('error',"Image not Found");
         }
 
         const singleCategory = await Category.findById(singleBlog.categoryId);
@@ -145,13 +152,17 @@ module.exports.deleteBlog = async(req,res)=>{
         await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
         const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
         if(deletedBlog){
+            
             console.log("Blog Deleted Successfully..");
+            res.locals.flash = req.flash('success',"Blog Deleted Successfully..");
             return res.redirect('back');
         }else{
+            res.locals.flash = req.flash('error',"Faild to delete Blog");
             console.log("Faild to delete Blog");
             return res.redirect('back');
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -163,6 +174,7 @@ module.exports.updateBlog = async(req,res)=>{
         const allCategory = await Category.find({status:true});
         return res.render('blog/updateBlog',{singleBlog,allCategory});
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log("Something Wrong",err)
     }
 }
@@ -175,6 +187,7 @@ module.exports.editBlog = async(req,res)=>{
                 const deleteImagePath = path.join(__dirname,'..',singleBlog.blog_image);
                 await fs.unlinkSync(deleteImagePath);
             } catch (err) {
+                res.locals.flash = req.flash('error',"Image not Found");
                 console.log("Image not Found",err);
             }
 
@@ -194,12 +207,15 @@ module.exports.editBlog = async(req,res)=>{
             newCategory.blogIds.push(this.updateBlog._id);
             await Category.findByIdAndUpdate(req.body.categoryId,newCategory);
             console.log("Blog Update successfully");
+            res.locals.flash = req.flash('success',"Blog Updated Successfully");
             return res.redirect('/blog/viewBlog');
         }else{
+            res.locals.flash = req.flash('success',"Faild to Update blog");
             console.log("Faild to update Blog");
             return res.redirect('back');
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -213,17 +229,21 @@ module.exports.changeBlogStatus = async (req,res)=>{
             const changedBlogStatus = await Blog.findByIdAndUpdate(id,{status:statusType});
             if(changedBlogStatus){
                 console.log("Blog statuse changed..");
+                res.locals.flash = req.flash('success',"Blog statuse changed..");
                 return res.redirect('back');
             }else{
+                res.locals.flash = req.flash('error',"Faild to chang blog status");
                 console.log("Faild to chang blog status");
                 return res.redirect('back');
             }
         }else{
+            res.locals.flash = req.flash('error',"This Blog Category is not active");
             console.log("This Blog Category is not active");
             return res.redirect('back');
         }
         
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -234,12 +254,15 @@ module.exports.deactiveAllBlog = async (req,res)=>{
         const deactivateBlogs= await Blog.updateMany({_id:{$in:req.body.ids}},{status:false});
         if(deactivateBlogs){
             console.log("Deactive all blog");
+            res.locals.flash = req.flash('success',"Deactive all selected blog");
             return res.redirect('back');
         }else{
+            res.locals.flash = req.flash('error',"Faild to deactive selected blogs");
             console.log("Faild to deactive blogs");
             return res.redirect('back');
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -259,8 +282,10 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
             const activateBlogs = await Blog.updateMany({_id:{$in:deactivateBlogsIds}},{status:true});
             if(activateBlogs){
                 console.log("Activate all blogs");
+                res.locals.flash = req.flash('success',"Activate all selected blogs");
                 return res.redirect('back');
             }else{
+                res.locals.flash = req.flash('error',"faild to active all selected blogs");
                 console.log("faild to active blogs");
                 return res.redirect('back')
             }
@@ -273,6 +298,7 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
                     const deleteImagePath = path.join(__dirname,'..',item.blog_image);
                     await fs.unlinkSync(deleteImagePath);
                 } catch (err) {
+                    res.locals.flash = req.flash('error',"image not found");
                     console.log("image not found");
                 }
                 const singleCategory = await Category.findById(item.categoryId);
@@ -284,13 +310,48 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
             const deletedBlog = await Blog.deleteMany({_id:{$in:req.body.ids}});
             if(deletedBlog){
                 console.log("Deleted blogs...");
+                res.locals.flash = req.flash('success',"Delete all selected Blog");
                 return res.redirect('back')
             }else{
                 console.log("Faild to delete blogs");
+                res.locals.flash = req.flash('error',"faild to all selected Blog");
                 return res.redirect('back');
             }
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
+        console.log(err);
+        return res.redirect('back');
+    }
+}
+
+
+module.exports.viewComment = async (req,res)=>{
+    try {
+        const allComments = await Comment.find();
+        return res.render('blog/viewComment',{allComments});
+
+    } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
+        console.log(err);
+        return res.redirect('back');
+    }
+}
+
+module.exports.changeCommentStatus = async (req,res)=>{
+    try {
+        const changeStatus = await Comment.findByIdAndUpdate(req.query.id,{status:req.query.status});
+        if(changeStatus){
+            console.log("Status change Successfully");
+            res.locals.flash = req.flash('success',"Status Change Successfully..");
+            return res.redirect('back');
+        }else{
+            console.log("Faild to change status");
+            res.locals.flash = req.flash('error',"Faild to change status of the comment")
+            return res.redirect('back');
+        }
+    } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }

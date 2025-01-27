@@ -6,6 +6,9 @@
     <title>Home</title>
     <!-- fontAwwsome icon  -->
      <link rel="stylesheet" href="/user/css/all.min.css" type="text/css" />
+     <!-- noty alert  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" integrity="sha512-0p3K0H3S6Q4bEWZ/WmC94Tgit2ular2/n0ESdfEX8l172YyQj8re1Wu9s/HT9T/T2osUw5Gx/6pAZNk3UKbESw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- end noty alert  -->
     <!-- boostrap  css  -->
      <link rel="stylesheet" href="/user/css/bootstrap.min.css" type="text/css" />
     <!-- main css  -->
@@ -57,7 +60,6 @@
                             <div class="profile_image" data-bs-toggle="dropdown" aria-expanded="false">
                                 <img src="<%= locals.userData._doc.profile_image %>" alt="profileImage" alt="profileImage" width="100%" class="rounded-circle img-fluid" />
                             </div>
-
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#"><i class="fa-solid fa-user me-2"></i><%= locals.userData._doc.name %></a></li>
                                 <li><a class="dropdown-item" href="#"><i class="fa-solid fa-lock me-2"></i>Change Password</a></li>
@@ -75,7 +77,7 @@
             <ul class="list-unstyled px-4 ">
                 <li class=" mt-4"><a href="/" class="nav-link py-2 activeCategory">All News <%= totalBlog %></a></li>
                 <% allCategory.map((item)=>{ %>
-                    <li><a href="/?catId=<%= item.id %>" class="nav-link py-2"><%= item.categoryName %> <span><%= item.blogIds.length %></span></a></li>
+                    <li><a href="/?catId=<%= item.id %>" class="nav-link py-2"><%= item.categoryName %> <span><%= item.blogCount %></span></a></li>
                 <% }) %>
             </ul>
         </div>

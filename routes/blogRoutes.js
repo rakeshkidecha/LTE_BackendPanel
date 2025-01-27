@@ -21,4 +21,8 @@ router.post('/deactiveAllBlog',BlogCtl.deactiveAllBlog);
 
 router.post('/oprateAllDeactiveBlog',BlogCtl.oprateAllDeactiveBlog);
 
+router.get('/viewComment',BlogCtl.viewComment);
+
+router.get('/changeCommentStatus',BlogCtl.changeCommentStatus);
+
 module.exports  = router;

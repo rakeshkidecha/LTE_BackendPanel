@@ -25,6 +25,9 @@
       crossorigin="anonymous"
     />
     <!--end::Fonts-->
+    <!-- noty alert  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.css" integrity="sha512-0p3K0H3S6Q4bEWZ/WmC94Tgit2ular2/n0ESdfEX8l172YyQj8re1Wu9s/HT9T/T2osUw5Gx/6pAZNk3UKbESw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- end noty alert  -->
     <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <link
       rel="stylesheet"
@@ -106,6 +109,9 @@
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
     ></script>
+     <!-- noty alert  -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+     <!-- end noty alert  -->
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
@@ -150,6 +156,27 @@
 
     </script>
     <!--end::OverlayScrollbars Configure-->
+    <script>
+      '<% if(locals.flash.success.length > 0 ){ %>'
+        new Noty({
+            type: 'success',
+            layout: 'topCenter',
+            text: '<%= locals.flash.success %>',
+            theme:'metroui',
+            timeout:1000,
+        }).show();
+      '  <% } %>  '
+      '<% if(locals.flash.error.length > 0 ){ %>'
+        new Noty({
+            type: 'error',
+            layout: 'topCenter',
+            text: '<%= locals.flash.error %>',
+            theme:'metroui',
+            timeout:1000,
+        }).show();
+      '  <% } %>  '
+     </script>
+    <!--end noty alert script  -->
     <!--end::Script-->
   </body>
   <!--end::Body-->

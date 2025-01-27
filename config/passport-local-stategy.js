@@ -3,7 +3,7 @@ const LocalStategy = require('passport-local').Strategy;
 const Admin = require('../models/AdminModel');
 const User = require('../models/userModel');
 
-passport.use('admin_strategy',new LocalStategy({usernameField:'email'}, async function(email,password,done){
+passport.use('admin_strategy',new LocalStategy({usernameField:'email',passReqToCallback:true}, async function(req,email,password,done){
     console.log("middelware");
     console.log(email,password);
     const AdminData = await Admin.findOne({email:email});
@@ -11,14 +11,16 @@ passport.use('admin_strategy',new LocalStategy({usernameField:'email'}, async fu
         if(AdminData.password==password){
             return done(null,{...AdminData,role:'admin'});
         }else{
+            req.flash('error',"Invalid Password");
             return done(null,false);
         }
     }else{
+        req.flash('error',"Invalid Email");
         return done(null,false);
     }
 }));
 
-passport.use('user_strategy',new LocalStategy({usernameField:'email'}, async function(email,password,done){
+passport.use('user_strategy',new LocalStategy({usernameField:'email',passReqToCallback:true}, async function(req,email,password,done){
     console.log("middelware");
     console.log(email,password);
     const userData = await User.findOne({email:email});
@@ -26,9 +28,11 @@ passport.use('user_strategy',new LocalStategy({usernameField:'email'}, async fun
         if(userData.password==password){
             return done(null,{...userData,role:'user'});
         }else{
+            req.flash('error',"Invalid Password");
             return done(null,false);
         }
     }else{
+        req.flash('error',"Invalid Email");
         return done(null,false);
     }
 }));

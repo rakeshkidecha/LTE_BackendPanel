@@ -47,7 +47,11 @@
                             <img src="<%= item.userId.profile_image %>" alt="profileImage" alt="profileImage" width="100%" class="rounded-circle img-fluid" />
                         </div>
                         <div class="ms-3">
-                            <h6 class="m-0"><%= item.userId.name %> <a href="/deleteComment/<%= item.id %>"><i class="fa-solid fa-trash"></i></a></h6>
+                            <h6 class="m-0"><%= item.userId.name %>
+                                <% if(locals.userData && JSON.stringify(locals.userData._doc._id) == JSON.stringify(item.userId._id)) { %> 
+                                    <a href="/deleteComment/<%= item.id %>" class="ms-2" style="font-size: 14px;" ><i class="fa-solid fa-trash"></i></a>
+                                <% } %> 
+                            </h6>
                             <p class="mb-2"><%= item.comment %></p>
                             <p style="font-size: 12px;" class="text-secondary"><%= item.time %></p>
                         </div>

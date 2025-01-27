@@ -1,0 +1,107 @@
+
+<%- include('../Layouts/header') %>
+
+
+    
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+      <main class="app-main">
+        <!--begin::App Content Header-->
+        <div class="app-content-header">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="d-flex justify-content-between">
+              <div ><h3 class="mb-0">Blogs Comments</h3></div>
+              <div class=" z-3 position-relative">
+              </div>
+              <div>
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="/dashBoard">dashBoard</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">viewComment</li>
+                </ol>
+              </div>
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content Header-->
+        <!--begin::App Content-->
+        <div class="app-content">
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row g-4">
+              <!-- /.col -->
+              <div class="">
+                <!-- /.card -->
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <h3 class="card-title">Active Blog Comment</h3>
+                  </div>
+                  <!-- /.card-header -->
+                  <div class="card-body p-0">
+                    <form action="/category/deactiveAll" method="post">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Comment</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% allComments.map((item)=>{ %>
+                            <tr>
+                                <td><%= item.comment %></td>
+                                <td><%= item.status %></td>
+                                <td>
+                                    <a href="/blog/changeCommentStatus/?id=<%= item.id %>&&status=true" class="btn btn-success" style="font-size: 12px;">Active</a>
+                                    <a href="/blog/changeCommentStatus/?id=<%= item.id %>&&status=false" class="btn btn-secondary" style="font-size: 12px;">Deactive</a>
+                                </td>
+                            </tr>
+                          <% }) %>
+                        </tbody>
+                      </table>
+                    </form>
+                  </div>
+                  <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+              </div>
+              
+              <!-- /.col -->
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content-->
+
+        <!-- category Update modal  -->
+        
+        <!-- end category Update modal  -->
+
+
+      </main>
+      <!--end::App Main-->
+     
+
+
+
+<%- include('../Layouts/footer') %>
+
+<script>
+    $("#checkAll").click(function(){
+        $('#deactiveAllBtn').toggleClass('d-none');
+        $('.activeCategory').not(this).prop('checked', this.checked);
+    });
+</script>
+<script>
+    $('#deactiveCategoryBtn').hide();
+    $("#checkAllDeactive").click(function(){
+        $('#deactiveCategoryBtn').toggle();
+        $('.deactiveCategory').not(this).prop('checked', this.checked);
+    });
+</script>

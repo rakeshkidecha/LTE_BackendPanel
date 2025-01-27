@@ -3,5 +3,29 @@
 </footer>
 
 <script src="/user/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+ <!-- noty alert  -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.min.js" integrity="sha512-lOrm9FgT1LKOJRUXF3tp6QaMorJftUjowOWiDcG5GFZ/q7ukof19V0HKx/GWzXCdt9zYju3/KhBNdCLzK8b90Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <!-- end noty alert  -->
+ <script>
+    '<% if(locals.flash.success.length > 0 ){ %>'
+      new Noty({
+          type: 'success',
+          layout: 'topCenter',
+          text: '<%= locals.flash.success %>',
+          theme:'metroui',
+          timeout:1000,
+      }).show();
+    '  <% } %>  '
+    '<% if(locals.flash.error.length > 0 ){ %>'
+      new Noty({
+          type: 'error',
+          layout: 'topCenter',
+          text: '<%= locals.flash.error %>',
+          theme:'metroui',
+          timeout:1000,
+      }).show();
+    '  <% } %>  '
+   </script>
+  <!--end noty alert script  -->
 </body>
 </html>

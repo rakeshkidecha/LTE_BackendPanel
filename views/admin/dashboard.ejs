@@ -1,6 +1,6 @@
 
 <%- include('../Layouts/header') %>
-
+    <p><%= locals.flash.success %></p>
       <!--end::Sidebar-->
       <!--begin::App Main-->
       <main class="app-main">
@@ -58,7 +58,7 @@
                 <!--end::Small Box Widget 1-->
               </div>
               <!--end::Col-->
-              <div class="col-lg-3 col-6">
+             <div class="col-lg-3 col-6">
                 <!--begin::Small Box Widget 2-->
                 <div class="small-box text-bg-success">
                   <div class="inner">
@@ -84,12 +84,40 @@
                   </a>
                 </div>
                 <!--end::Small Box Widget 2-->
-              </div>
+              </div> 
+             <div class="col-lg-3 col-6">
+                <!--begin::Small Box Widget 2-->
+                <div class="small-box text-bg-success">
+                  <div class="inner">
+                    <h3><%= totalCommets %></h3>
+                    <p>Total Comments</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="/blog/viewBlog"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+                <!--end::Small Box Widget 2-->
+              </div> 
             </div>
             <!--end::Row-->
             <!--begin::Row-->
             <div class="row">
               <!-- Start col -->
+               <!-- category chart  -->
               <div class="col-lg-6 connectedSortable">
                 <div class="card mb-4">
                   <div class="card-header"><h3 class="card-title">Blog in Category</h3></div>
@@ -106,6 +134,24 @@
                 </div>
                 <!-- /.card -->
               </div>
+              <!-- comment chart   -->
+              <div class="col-lg-6 connectedSortable">
+                <div class="card mb-4">
+                  <div class="card-header"><h3 class="card-title">Comments in Blog</h3></div>
+                  <div class="card-body">
+                    <div class="text-center mb-4">
+                      <div onclick="changeCommentChartType('pie')" style="font-size: 12px;" class="btn btn-primary">Pie</div>
+                      <div onclick="changeCommentChartType('bar')" style="font-size: 12px;" class="btn btn-primary">Bar</div>
+                      <div onclick="changeCommentChartType('doughnut')" style="font-size: 12px;" class="btn btn-primary">Doughnut</div>
+                    </div>
+                    <div>
+                      <canvas id="comment-chart" ></canvas>
+                    </div>
+                  </div>
+                </div>
+                <!-- /.card -->
+              </div>
+              
               <!-- /.Start col -->
               <!-- <div class="col-lg-6">
                 <div class="card mb-4">
@@ -131,7 +177,6 @@
       <script>
 
       let chart;
-
       changeChartType('bar');
       function changeChartType(chartType){
         if(chart){
@@ -145,6 +190,33 @@
             datasets: [{
               label: 'Blogs',
               data: JSON.parse('<%- JSON.stringify(values) %>'),
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      }
+
+      let commentChart;
+      changeCommentChartType('bar');
+      function changeCommentChartType(chartType){
+        if(commentChart){
+          commentChart.destroy();
+        }
+        const ctx = document.getElementById('comment-chart');
+        commentChart = new Chart(ctx, {
+          type: chartType,
+          data: {
+            labels: JSON.parse('<%- JSON.stringify(blogLable) %>'),
+            datasets: [{
+              label: 'Comments',
+              data: JSON.parse('<%- JSON.stringify(commentVlaue) %>'),
               borderWidth: 1
             }]
           },

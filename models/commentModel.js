@@ -19,12 +19,8 @@ const CommentSchema=  mongoose.Schema({
     status:{
         type:Boolean,
         default:true
-    },
-    date:{
-        type:String,
-        default:moment().format()
     }
-})
+},{timestamps:true})
 
 
 const Comment = mongoose.model('Comment',CommentSchema);

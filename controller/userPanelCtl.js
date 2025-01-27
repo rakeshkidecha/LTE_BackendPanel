@@ -25,7 +25,17 @@ module.exports.home = async (req,res)=>{
             page = req.query.page;
         }
 
-        const allCategory = await Category.find({status:true});
+        const allCategory = await Category.find({status:true}).populate('blogIds').exec();
+        allCategory.map((item)=>{
+            let count = 0 ;
+            item.blogIds.map((v)=>{
+                if(v.status){
+                    count++;
+                }
+            })
+            item.blogCount = count;
+        })
+        
 
         let catId;
         if(req.query.catId){
@@ -62,6 +72,7 @@ module.exports.home = async (req,res)=>{
             sort
         });
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -74,14 +85,15 @@ module.exports.singleNews = async (req,res)=>{
         const singleNews = await Blog.findById({_id:req.params.id}).populate('categoryId').exec();
         const recentBlog = await Blog.find({status:true}).sort({_id:-1}).limit(5);
         const totalBlog = await Blog.find({status:true}).countDocuments();
-        const allComments = await Comment.find({blogId:req.params.id}).populate('userId').exec();
+        const allComments = await Comment.find({blogId:req.params.id,status:true}).populate('userId').exec();
 
         allComments.map((item)=>{
-            item.time = moment(item.date).fromNow();
+            item.time = moment(item.createdAt).fromNow();
         })
 
         return res.render('userPanel/singleNews',{allCategory,singleNews,reqPath,recentBlog,totalBlog,allComments})
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -92,19 +104,20 @@ module.exports.addComment = async(req,res)=>{
         if(!res.locals.userData){
             return res.redirect('/userLogin');
         }
-        console.log(req.body);
         const addedComment = await Comment.create(req.body);
         if(addedComment){
             const singleBlog = await Blog.findById(addedComment.blogId);
             singleBlog.commentIds.push(addedComment._id);
             await Blog.findByIdAndUpdate(singleBlog._id,singleBlog);
-            console.log("Comment Add Successfully");
+            res.locals.flash = req.flash('success',"Comment Add Successfully");
             return res.redirect('back');
         }else{
             console.log("Faild to add comment");
+            res.locals.flash = req.flash('error',"Faild to add comment");
             return res.redirect('back');
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -118,16 +131,20 @@ module.exports.deleteComment = async (req,res)=>{
             singleBlog.commentIds.splice(singleBlog.commentIds.indexOf(deletedComment._id),1);
             await Blog.findByIdAndUpdate(singleBlog._id,singleBlog);
             console.log("comment Deleted..");
+            res.locals.flash = req.flash('success',"comment Deleted..");
             return res.redirect('back');
         }else{
             console.log("Faild to delete comment");
+            res.locals.flash = req.flash('error',"Faild to delete comment");
             return res.redirect('back');
         }
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
 }
+
 
 
 // user login and  sign up 
@@ -135,6 +152,7 @@ module.exports.userSignUp = async(req,res)=>{
     try {
         return res.render('userPanel/userSignUp')
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -145,12 +163,15 @@ module.exports.createUser = async (req,res)=>{
         const isExistEmail = await User.find({email:req.body.email}).countDocuments();
 
         if(isExistEmail!=0){
-            console.log("This Email is already exist, try another Email for sign up");
+            console.log("This Email is already exist, try another Email for sign up"); 
+            res.locals.flash = req.flash('error',"This Email is already exist, try another Email for sign up");
+            
             return res.redirect('back');
         }
 
         if(req.body.password != req.body.confirmPassword){
             console.log("password and  comfirm password are not same");
+            res.locals.flash = req.flash('error',"password and  comfirm password are not same.");
             return res.redirect('back');
         }
         
@@ -166,13 +187,16 @@ module.exports.createUser = async (req,res)=>{
         const createdUser = await User.create(req.body);
         if(createdUser){
             console.log("User Sign Up successfully");
+            res.locals.flash = req.flash('success',"User Sign Up successfully");
             return res.redirect('/');
         }else{
             console.log("Faild to SignUp");
+            res.locals.flash = req.flash('error',"Faild to SignUp");
             return res.redirect('back');
         }
 
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -182,6 +206,7 @@ module.exports.userLogin = async(req,res)=>{
     try {
         return res.render('userPanel/userLogin');
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -189,8 +214,10 @@ module.exports.userLogin = async(req,res)=>{
 
 module.exports.checkUser = async (req,res)=>{
     try {
+        req.flash('success',"Login Successfully");
         return res.redirect('/')
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
@@ -200,6 +227,7 @@ module.exports.logOutUser = async(req,res)=>{
     try {
         req.session.destroy(err=>err?false:res.redirect('back'))
     } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
         return res.redirect('back');
     }
