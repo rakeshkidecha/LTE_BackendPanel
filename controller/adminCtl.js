@@ -8,6 +8,7 @@ const moment =  require('moment');
 const Blog = require('../models/BlogModel');
 const Category = require('../models/CategoryModel');
 const Comment = require('../models/commentModel');
+const {validationResult} = require('express-validator');
 
 module.exports.dashBoard = async (req,res)=>{
     try {
@@ -73,6 +74,15 @@ module.exports.addAdmin = async(req,res)=>{
 
 module.exports.insertAdmin = async (req,res)=>{
     try {
+
+        const result = validationResult(req);
+
+        if(result.errors.length > 0){
+            console.log(result);
+            return res.redirect('back');
+        }
+
+
         let imagePath = '';
         if(req.file){
             imagePath = Admin.imgPath+'/'+req.file.filename;

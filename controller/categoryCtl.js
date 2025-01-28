@@ -3,6 +3,7 @@ const Blog = require('../models/BlogModel');
 const Comment = require('../models/commentModel');
 const fs = require('fs');
 const path = require('path');
+const {validationResult} = require('express-validator');
 
 module.exports.addCategory = async (req,res)=>{
     try {
@@ -16,6 +17,12 @@ module.exports.addCategory = async (req,res)=>{
 
 module.exports.insertCategory= async(req,res)=>{
     try {
+
+        const result = validationResult(req);
+        if(result.errors.length > 0){
+            console.log(result);
+            return res.redirect('back');
+        }
         
         const addedCategory = await Category.create(req.body);
 

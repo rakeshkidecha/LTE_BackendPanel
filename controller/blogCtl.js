@@ -3,6 +3,7 @@ const Category = require('../models/CategoryModel');
 const Comment = require('../models/commentModel');
 const path = require('path');
 const fs = require('fs');
+const {validationResult} = require('express-validator');
 
 module.exports.addBlog = async (req,res)=>{
     try {
@@ -17,6 +18,14 @@ module.exports.addBlog = async (req,res)=>{
 
 module.exports.insertBlog = async (req,res)=>{
     try {
+
+        const result = validationResult(req);
+        if(result.errors.length > 0){
+            console.log(result);
+            return res.redirect('back');
+        }
+
+
         let imagePath = '';
         if(req.file){
             imagePath = Blog.imgPath+'/'+req.file.filename;

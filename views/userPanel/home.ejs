@@ -37,7 +37,7 @@
                     <a class="page-link <%= page<=0?'disabled':'' %>"  href="/?page=<%= page - 1 %><%= searchValue? '&search='+searchValue:'' %><%= sort? '&sort='+sort:'' %><%= sortType? '&sortType='+sortType:'' %>">Previous</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link bg-transparent text-dark" href="/?page=<%= page %>"><%= page+1 %></a>
+                    <a class="page-link bg-transparent text-dark" href="/?page=<%= page %>"><%= allBlog.length == 0?0: page+1 %></a>
                 </li>
                 <li class="page-item">
                     <a class="page-link <%= page >= totalPage -1?'disabled':'' %>" href="/?page=<%= page + 1 %><%= searchValue? '&search='+searchValue:'' %><%= sort? '&sort='+sort:'' %><%= sortType? '&sortType='+sortType:'' %>">Next</a>
