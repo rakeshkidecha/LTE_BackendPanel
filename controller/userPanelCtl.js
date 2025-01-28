@@ -37,9 +37,10 @@ module.exports.home = async (req,res)=>{
         })
         
 
-        let catId;
+        let catId ,currentCategory;
         if(req.query.catId){
             catId=req.query.catId;
+            currentCategory = await Category.findById(catId);
         }
 
         const allBlog = await Blog.find({
@@ -69,7 +70,8 @@ module.exports.home = async (req,res)=>{
             totalPage,
             totalBlog,
             sortType,
-            sort
+            sort,
+            currentCategory
         });
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
@@ -86,12 +88,12 @@ module.exports.singleNews = async (req,res)=>{
         const recentBlog = await Blog.find({status:true}).sort({_id:-1}).limit(5);
         const totalBlog = await Blog.find({status:true}).countDocuments();
         const allComments = await Comment.find({blogId:req.params.id,status:true}).populate('userId').exec();
-
+        let currentCategory = singleNews.categoryId;
         allComments.map((item)=>{
             item.time = moment(item.createdAt).fromNow();
         })
 
-        return res.render('userPanel/singleNews',{allCategory,singleNews,reqPath,recentBlog,totalBlog,allComments})
+        return res.render('userPanel/singleNews',{allCategory,singleNews,reqPath,recentBlog,totalBlog,allComments,currentCategory})
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
@@ -125,10 +127,11 @@ module.exports.addComment = async(req,res)=>{
 
 module.exports.deleteComment = async (req,res)=>{
     try {
+        const singleComment = await Comment.findById(req.params.id);
         const deletedComment = await Comment.findByIdAndDelete(req.params.id);
         if(deletedComment){
-            const singleBlog = await Blog.findById(deletedComment.blogId);
-            singleBlog.commentIds.splice(singleBlog.commentIds.indexOf(deletedComment._id),1);
+            const singleBlog = await Blog.findById(singleComment.blogId);
+            singleBlog.commentIds.splice(singleBlog.commentIds.indexOf(singleComment._id),1);
             await Blog.findByIdAndUpdate(singleBlog._id,singleBlog);
             console.log("comment Deleted..");
             res.locals.flash = req.flash('success',"comment Deleted..");

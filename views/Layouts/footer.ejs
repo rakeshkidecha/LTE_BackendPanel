@@ -227,11 +227,11 @@
         timeout:1000,
     }).show();
   '  <% } %>  '
-  '<% if(locals.flash.error.length > 0 ){ %>'
+  '<% if(locals.flash.warning.length > 0 ){ %>'
     new Noty({
-        type: 'error',
+        type: 'warning',
         layout: 'topCenter',
-        text: '<%= locals.flash.error %>',
+        text: '<%= locals.flash.warning %>',
         theme:'metroui',
         timeout:1000,
     }).show();

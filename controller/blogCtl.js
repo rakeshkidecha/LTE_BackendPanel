@@ -152,7 +152,7 @@ module.exports.deleteBlog = async(req,res)=>{
         await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
         const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
         if(deletedBlog){
-            
+            await Comment.deleteMany({_id:{$in:singleBlog.commentIds}});
             console.log("Blog Deleted Successfully..");
             res.locals.flash = req.flash('success',"Blog Deleted Successfully..");
             return res.redirect('back');
@@ -228,7 +228,10 @@ module.exports.changeBlogStatus = async (req,res)=>{
         if(singleBlog.categoryId.status){
             const changedBlogStatus = await Blog.findByIdAndUpdate(id,{status:statusType});
             if(changedBlogStatus){
-                console.log("Blog statuse changed..");
+                if(statusType == 'false'){
+                    await Comment.updateMany({_id:{$in:changedBlogStatus.commentIds}},{status:statusType});
+                }
+                console.log("Blog status changed..");
                 res.locals.flash = req.flash('success',"Blog statuse changed..");
                 return res.redirect('back');
             }else{
@@ -251,8 +254,12 @@ module.exports.changeBlogStatus = async (req,res)=>{
 
 module.exports.deactiveAllBlog = async (req,res)=>{
     try {
+        const allDeactiveBlog = await Blog.find({_id:{$in:req.body.ids}})
         const deactivateBlogs= await Blog.updateMany({_id:{$in:req.body.ids}},{status:false});
         if(deactivateBlogs){
+            allDeactiveBlog.map(async(item)=>{
+                await Comment.updateMany({_id:{$in:item.commentIds}},{status:false});
+            })
             console.log("Deactive all blog");
             res.locals.flash = req.flash('success',"Deactive all selected blog");
             return res.redirect('back');
@@ -281,8 +288,8 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
 
             const activateBlogs = await Blog.updateMany({_id:{$in:deactivateBlogsIds}},{status:true});
             if(activateBlogs){
-                console.log("Activate all blogs");
-                res.locals.flash = req.flash('success',"Activate all selected blogs");
+                console.log("Activate all blogs there category are active");
+                res.locals.flash = req.flash('warning',"Activate all selected blogs Expects ther category are dactive");
                 return res.redirect('back');
             }else{
                 res.locals.flash = req.flash('error',"faild to active all selected blogs");
@@ -305,6 +312,7 @@ module.exports.oprateAllDeactiveBlog = async (req,res)=>{
                 const index = singleCategory.blogIds.indexOf(item._id);
                 singleCategory.blogIds.splice(index,1);
                 await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
+                await Comment.deleteMany({_id:{$in:item.commentIds}});
             });
  
             const deletedBlog = await Blog.deleteMany({_id:{$in:req.body.ids}});
@@ -340,6 +348,13 @@ module.exports.viewComment = async (req,res)=>{
 
 module.exports.changeCommentStatus = async (req,res)=>{
     try {
+        if(req.query.status=="true"){
+            const singleComment = await Comment.findById(req.query.id).populate('blogId').exec();
+            if(!singleComment.blogId.status){
+                req.flash('error',"The Blog of this comment is Deactive, so you can't Active this comment");
+                return res.redirect('back');
+            }
+        }
         const changeStatus = await Comment.findByIdAndUpdate(req.query.id,{status:req.query.status});
         if(changeStatus){
             console.log("Status change Successfully");

@@ -1,5 +1,6 @@
 const Category = require('../models/CategoryModel');
 const Blog = require('../models/BlogModel');
+const Comment = require('../models/commentModel');
 const fs = require('fs');
 const path = require('path');
 
@@ -75,7 +76,11 @@ module.exports.changeCategoryStatus = async (req,res)=>{
         if(changeStatusCategory){
             if(status=='false'){
                 const updatedCategory = await Category.findById(changeStatusCategory.id);
-                await Blog.updateMany({_id:{$in:updatedCategory.blogIds}},{status:status})
+                const allBlogChangeStatas = await Blog.find({_id:{$in:updatedCategory.blogIds}});
+                await Blog.updateMany({_id:{$in:updatedCategory.blogIds}},{status:status});
+                allBlogChangeStatas.map(async(item)=>{
+                    await Comment.updateMany({_id:{$in:item.commentIds}},{status:status});
+                })
             }
             console.log("Category deactived successFully..");
             res.locals.flash = req.flash('success',"Category deactived successFully..");
@@ -105,6 +110,7 @@ module.exports.deleteCategory = async(req,res)=>{
                     res.locals.flash = req.flash('error',"Image not found");
                     console.log("Image not found",err);
                 }
+                await Comment.deleteMany({_id:{$in:item.commentIds}});
             });
             await Blog.deleteMany({_id:{$in:deletedCategory.blogIds}});
             console.log("Category Deleted successfully");
@@ -147,7 +153,11 @@ module.exports.deactiveAll = async(req,res)=>{
         if(deactiveAllCategory){
             const allCategory = await Category.find({_id:{$in:req.body.ids}});
             allCategory.map(async(item)=>{
-                await Blog.updateMany({_id:{$in:item.blogIds}},{status:item.status});
+                const allBlogChangeStatas = await Blog.find({_id:{$in:item.blogIds}});
+                await Blog.updateMany({_id:{$in:item.blogIds}},{status:false});
+                allBlogChangeStatas.map(async(v)=>{
+                    await Comment.updateMany({_id:{$in:v.commentIds}},{status:false});
+                });
             })
             console.log("Deactive all category..")
             res.locals.flash = req.flash('success',"Deactive all selected category..");
@@ -169,10 +179,6 @@ module.exports.allDeactiveCategory = async (req,res)=>{
         if(req.body.deActive){
             const activeAllCategory = await Category.updateMany({_id:{$in:req.body.ids}},{status:true});
             if(activeAllCategory){
-                const allCategory = await Category.find({_id:{$in:req.body.ids}});
-                allCategory.map(async(item)=>{
-                    await Blog.updateMany({_id:{$in:item.blogIds}},{status:item.status});
-                });
                 console.log("active all  category..");
                 res.locals.flash = req.flash('success',"active all selected category..");
                 return res.redirect('back');
@@ -187,14 +193,15 @@ module.exports.allDeactiveCategory = async (req,res)=>{
             if(deleteAllCategory){
                 allCategory.map(async(item)=>{
                     const allBlog = await Blog.find({_id:{$in:item.blogIds}});
-                    allBlog.map(async(item)=>{
+                    allBlog.map(async(v)=>{
                         try {
-                            const deletePath = path.join(__dirname,"..",item.blog_image);
+                            const deletePath = path.join(__dirname,"..",v.blog_image);
                             await fs.unlinkSync(deletePath);
                         } catch (err) {
                             res.locals.flash = req.flash('error',"Image not found");
                             console.log("Image not found",err);
                         }
+                        await Comment.deleteMany({_id:{$in:v.commentIds}});
                     });
                     await Blog.deleteMany({_id:{$in:item.blogIds}});
                 });

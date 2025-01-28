@@ -5,8 +5,10 @@
     <main class="p-4">
         <div class="d-flex align-items-center justify-content-between">
             <div>
-                <a href="" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a>
-                / 
+                <a href="/" class="text-decoration-none text-dark d-inlne-block mx-2 activeCategory">All news</a>
+                / <% if(currentCategory) { %>
+                    <a href="/?catId=<%= currentCategory.id %>" class="text-decoration-none text-dark d-inlne-block mx-2"><%= currentCategory.categoryName %></a>
+                <% } %> 
             </div>
         </div>
         <div class="allBlog">
