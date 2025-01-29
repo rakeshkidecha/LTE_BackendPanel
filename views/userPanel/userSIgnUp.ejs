@@ -23,27 +23,42 @@
             </div>
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">First Name*</label>
-                <input type="text" name="fName" class="form-control" placeholder="Enter First Name" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="text" name="fName" value="<%= oldValue&& oldValue.fName ? oldValue.fName:'' %>" class="form-control" placeholder="Enter First Name" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <% if(errors && errors.fName) { %>
+                  <p class="text-danger m-0 mt-1">*<%= errors.fName.msg %></p>
+                <%  } %>
             </div>
 
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Last Name*</label>
-                <input type="text" name="lName" class="form-control" placeholder="Enter Last Name"  id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="text" name="lName" value="<%= oldValue&& oldValue.lName ? oldValue.lName:'' %>"  class="form-control" placeholder="Enter Last Name"  id="exampleInputEmail1" aria-describedby="emailHelp">
+                <% if(errors && errors.lName) { %>
+                  <p class="text-danger m-0 mt-1">*<%= errors.lName.msg %></p>
+                <%  } %>
             </div>
 
             <div class="mb-3">
               <label for="exampleInputEmail1" class="form-label">Email address*</label>
-              <input type="email" name="email" class="form-control" placeholder="Enter Email Address"  id="exampleInputEmail1" aria-describedby="emailHelp">
+              <input type="email" name="email" value="<%= oldValue&& oldValue.email ? oldValue.email:'' %>"  class="form-control" placeholder="Enter Email Address"  id="exampleInputEmail1" aria-describedby="emailHelp">
+              <% if(errors && errors.email) { %>
+                <p class="text-danger m-0 mt-1">*<%= errors.email.msg %></p>
+              <%  } %>
             </div>
 
             <div class="mb-3">
               <label for="exampleInputPassword1" class="form-label">Password*</label>
-              <input type="text" name="password" class="form-control" placeholder="Enter Password"  id="exampleInputPassword1">
+              <input type="text" name="password" value="<%= oldValue&& oldValue.password ? oldValue.password:'' %>"  class="form-control" placeholder="Enter Password"  id="exampleInputPassword1">
+              <% if(errors && errors.password) { %>
+                <p class="text-danger m-0 mt-1">*<%= errors.password.msg %></p>
+              <%  } %>
             </div>
 
             <div class="mb-3">
               <label for="exampleInputPassword1" class="form-label">Confirm Password*</label>
-              <input type="text" name="confirmPassword" class="form-control" placeholder="Re Enter Password"  id="exampleInputPassword1">
+              <input type="text" name="confirmPassword" value="<%= oldValue&& oldValue.confirmPassword ? oldValue.confirmPassword:'' %>"  class="form-control" placeholder="Re Enter Password"  id="exampleInputPassword1">
+              <% if(errors && errors.confirmPassword) { %>
+                <p class="text-danger m-0 mt-1">*<%= errors.confirmPassword.msg %></p>
+              <%  } %>
             </div>
 
             <div class="mb-3">

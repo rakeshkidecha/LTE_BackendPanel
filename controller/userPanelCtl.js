@@ -4,6 +4,7 @@ const Blog = require('../models/BlogModel');
 const moment = require('moment');
 const User = require('../models/userModel');
 const Comment = require('../models/commentModel');
+const {validationResult} = require('express-validator');
 
 module.exports.home = async (req,res)=>{
     try {
@@ -106,6 +107,7 @@ module.exports.addComment = async(req,res)=>{
         if(!res.locals.userData){
             return res.redirect('/userLogin');
         }
+
         const addedComment = await Comment.create(req.body);
         if(addedComment){
             const singleBlog = await Blog.findById(addedComment.blogId);
@@ -148,12 +150,99 @@ module.exports.deleteComment = async (req,res)=>{
     }
 }
 
+module.exports.likeComment = async(req,res)=>{
+    try {
+
+        const {id,currlike,userId} = req.params;
+
+        const singleComment = await Comment.findById(id).populate('userId').exec();
+
+        if(!singleComment.likeUserId.includes(userId)){
+
+            if(singleComment.deslikeUserId.includes(userId)){
+                singleComment.deslikeUserId.splice(singleComment.deslikeUserId.indexOf(userId),1);
+                singleComment.deslike = singleComment.deslike - 1
+            }         
+
+            singleComment.likeUserId.push(userId);
+            singleComment.like = parseInt(currlike) + 1
+        }else{
+            singleComment.likeUserId.splice(singleComment.likeUserId.indexOf(userId),1);
+            singleComment.like = parseInt(currlike) - 1
+        }
+        await Comment.findByIdAndUpdate(id,singleComment);
+
+
+        let allComments = await Comment.find({status:true}).populate('userId').exec();
+
+        allComments = allComments.map((item)=>{
+            return {...item.toObject(),time: moment(item.createdAt).fromNow()}
+        });
+
+
+        if(allComments){
+            return res.json(allComments);
+        }else{
+            return res.redirect('back')
+        }
+
+    } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
+        console.log(err);
+        return res.redirect('back');   
+    }
+}
+
+module.exports.deslikeComment = async(req,res)=>{
+    try {
+
+        const {id,currdeslike,userId} = req.params;
+        const singleComment = await Comment.findById(id).populate('userId').exec();
+
+        if(!singleComment.deslikeUserId.includes(userId)){
+
+            if(singleComment.likeUserId.includes(userId)){
+                singleComment.likeUserId.splice(singleComment.likeUserId.indexOf(userId),1);
+                singleComment.like = singleComment.like - 1;
+            }
+
+            singleComment.deslikeUserId.push(userId);
+            singleComment.deslike = parseInt(currdeslike) + 1
+        }else{
+            singleComment.deslikeUserId.splice(singleComment.deslikeUserId.indexOf(userId),1);
+            singleComment.deslike = parseInt(currdeslike) - 1
+        }
+        await Comment.findByIdAndUpdate(id,singleComment);
+
+
+        let allComments = await Comment.find({status:true}).populate('userId').exec();
+
+        allComments = allComments.map((item)=>{
+            return {...item.toObject(),time: moment(item.createdAt).fromNow()}
+        });
+
+
+        if(allComments){
+            return res.json(allComments);
+        }else{
+            return res.redirect('back')
+        }
+
+    } catch (err) {
+        res.locals.flash = req.flash('error',"Something Wrong");
+        console.log(err);
+        return res.redirect('back');   
+    }
+}
 
 
 // user login and  sign up 
 module.exports.userSignUp = async(req,res)=>{
     try {
-        return res.render('userPanel/userSignUp')
+        return res.render('userPanel/userSignUp',{
+            errors : null,
+            oldValue:null
+        })
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
@@ -163,6 +252,16 @@ module.exports.userSignUp = async(req,res)=>{
 
 module.exports.createUser = async (req,res)=>{
     try {
+
+        const result = validationResult(req);
+        if(!result.isEmpty()){
+            console.log(result);
+            return res.render('userPanel/userSignUp',{
+                errors : result.mapped(),
+                oldValue : req.body
+            })
+        }
+
         const isExistEmail = await User.find({email:req.body.email}).countDocuments();
 
         if(isExistEmail!=0){
@@ -195,13 +294,13 @@ module.exports.createUser = async (req,res)=>{
         }else{
             console.log("Faild to SignUp");
             res.locals.flash = req.flash('error',"Faild to SignUp");
-            return res.redirect('back');
+            return res.redirect('/userSignUp');
         }
 
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
-        return res.redirect('back');
+        return res.redirect('/userSignUp');
     }
 }
 

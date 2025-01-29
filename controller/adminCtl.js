@@ -62,8 +62,10 @@ module.exports.dashBoard = async (req,res)=>{
 
 module.exports.addAdmin = async(req,res)=>{
     try {
-      
-        return res.render('admin/addAdmin');
+        return res.render('admin/addAdmin',{
+            errors : null,
+            oldValue : null
+        });
        
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
@@ -77,9 +79,11 @@ module.exports.insertAdmin = async (req,res)=>{
 
         const result = validationResult(req);
 
-        if(result.errors.length > 0){
-            console.log(result);
-            return res.redirect('back');
+        if(!result.isEmpty()){
+            return res.render('admin/addAdmin',{
+                errors:result.mapped(),
+                oldValue : req.body
+            })
         }
 
 
@@ -99,13 +103,13 @@ module.exports.insertAdmin = async (req,res)=>{
         }else{
             console.log("Admin record not add faild....");
             res.locals.flash = req.flash('success',"Faild to add Admin");
-            return res.redirect('back');
+            return res.redirect('/addAdmin');
         }
 
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log("Something wrong",err);
-        return res.redirect('back');
+        return res.redirect('/addAdmin');
     }
 }
 

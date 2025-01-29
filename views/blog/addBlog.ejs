@@ -54,18 +54,24 @@
                             <label for="inputEmail3" class="col-sm-3 col-form-label pt-0">Select Category</label>
                             <div class="col-sm-9">
                                 <select class="form-select" name="categoryId" id="validationCustom04" >
-                                    <option value="">-- Select Category</option>
+                                    <option value="">-- Select Category*</option>
                                     <% allCategory.map((item)=>{ %>
-                                        <option value="<%= item.id %>"><%= item.categoryName %></option>
+                                        <option value="<%= item.id %>" <%= oldValue && oldValue.categoryId == item.id ? 'selected' :'' %>><%= item.categoryName %></option>
                                       <% }) %>
                                 </select>
+                                <% if(errors && errors.categoryId) { %>
+                                  <p class="text-danger m-0 mt-1">*<%= errors.categoryId.msg %></p>
+                                <%  } %>
                             </div>
                         </div>
 
                       <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-3 col-form-label">Title</label>
+                        <label for="inputEmail3" class="col-sm-3 col-form-label">Title*</label>
                         <div class="col-sm-9">
-                          <input type="text" name="title" class="form-control" id="inputEmail3" />
+                          <input type="text" name="title" value="<%= oldValue&& oldValue.title ? oldValue.title:'' %>" class="form-control" id="inputEmail3" />
+                          <% if(errors && errors.title) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.title.msg %></p>
+                          <%  } %>
                         </div>
                       </div>
 
@@ -79,7 +85,10 @@
                       <div class="row mb-3">
                         <label for="inputEmail3" class="col-sm-3 col-form-label">Description</label>
                         <div class="col-sm-9">
-                            <textarea name="description" class="form-control"></textarea>
+                            <textarea name="description" class="form-control"><%= oldValue&& oldValue.description ? oldValue.description:'' %></textarea>
+                            <% if(errors && errors.description) { %>
+                              <p class="text-danger m-0 mt-1">*<%= errors.description.msg %></p>
+                            <%  } %>
                         </div>
                       </div>
 

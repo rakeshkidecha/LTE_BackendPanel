@@ -51,35 +51,47 @@
                     <!--begin::Body-->
                     <div class="card-body">
                       <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-2 col-form-label">First Name</label>
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">First Name*</label>
                         <div class="col-sm-10">
-                          <input type="text" name="fName" class="form-control" id="inputEmail3" />
+                          <input type="text" name="fName" value="<%= oldValue&& oldValue.fName ? oldValue.fName:'' %>" class="form-control" id="inputEmail3" />
+                          <% if(errors && errors.fName) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.fName.msg %></p>
+                          <%  } %>
                         </div>
                       </div>
 
                       <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name</label>
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">Last Name*</label>
                         <div class="col-sm-10">
-                          <input type="text" name="lName" class="form-control" id="inputEmail3" />
+                          <input type="text" name="lName" value="<%= oldValue&& oldValue.lName ? oldValue.lName:'' %>" class="form-control" id="inputEmail3" />
+                          <% if(errors && errors.lName) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.lName.msg %></p>
+                          <%  } %>
                         </div>
                       </div>
 
                       <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                        <label for="inputEmail3" class="col-sm-2 col-form-label">Email*</label>
                         <div class="col-sm-10">
-                          <input type="email" name="email" class="form-control" id="inputEmail3" />
+                          <input type="email" name="email"  value="<%= oldValue&& oldValue.email ? oldValue.email:'' %>" class="form-control" id="inputEmail3" />
+                          <% if(errors && errors.email) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.email.msg %></p>
+                          <%  } %>
                         </div>
                       </div>
 
                       <div class="row mb-3">
-                        <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+                        <label for="inputPassword3" class="col-sm-2 col-form-label">Password*</label>
                         <div class="col-sm-10">
-                          <input type="password" name="password" class="form-control" id="inputPassword3" />
+                          <input type="password" name="password"  value="<%= oldValue&& oldValue.password ? oldValue.password:'' %>" class="form-control" id="inputPassword3" />
+                          <% if(errors && errors.password) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.password.msg %></p>
+                          <%  } %>
                         </div>
                       </div>
 
                       <fieldset class="row mb-3">
-                        <legend class="col-form-label col-sm-2 pt-0">Gender</legend>
+                        <legend class="col-form-label col-sm-2 pt-0">Gender*</legend>
                         <div class="col-sm-10">
                           <div class="form-check">
                             <input
@@ -88,6 +100,7 @@
                               name="gender"
                               id="gridRadios1"
                               value="Male"
+                              <%= oldValue && oldValue.gender =='Male' ? 'checked' : '' %>
                             />
                             <label class="form-check-label" for="gridRadios1"> Male</label>
                           </div>
@@ -98,6 +111,7 @@
                               name="gender"
                               id="gridRadios1"
                               value="Female"
+                              <%= oldValue && oldValue.gender =='Female' ? 'checked' : '' %>
                             />
                             <label class="form-check-label" for="gridRadios1"> Female</label>
                           </div>
@@ -108,42 +122,52 @@
                               name="gender"
                               id="gridRadios1"
                               value="Other"
+                              <%= oldValue && oldValue.gender =='Other' ? 'checked' : '' %>
                             />
                             <label class="form-check-label" for="gridRadios1"> Other</label>
                           </div>
+                          <% if(errors && errors.gender) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.gender.msg %></p>
+                          <%  } %>
                         </div>
                       </fieldset>
 
                       <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-2 col-form-label pt-0 text-nowrap">Select Hobby</label>
+                        <label for="inputEmail3" class="col-sm-2 col-form-label pt-0 text-nowrap">Select Hobby*</label>
                         <% hobbyNames = ["Reading","Writing","Playing","Music"] %> 
                         <div class="col-sm-10">
                           <% hobbyNames.map((item)=>{ %>
                             <div class="form-check">
-                              <input class="form-check-input" name="hobby" value="<%= item %>" type="checkbox" id="gridCheck1" />
+                              <input class="form-check-input" name="hobby" value="<%= item %>" type="checkbox" id="gridCheck1" <%= oldValue && oldValue.hobby && oldValue.hobby.includes(item) ? 'checked' : '' %> />
                               <label class="form-check-label" for="gridCheck1">
                                 <%= item %>
                               </label>
                             </div>
                           <% }) %>
+                          <% if(errors && errors.hobby) { %>
+                            <p class="text-danger m-0 mt-1">*<%= errors.hobby.msg %></p>
+                          <%  } %>
                         </div>
                       </div>
 
                       <div class="row mb-3">
-                        <label for="inputEmail3" class="col-sm-2 col-form-label pt-0">Select City</label>
+                        <label for="inputEmail3" class="col-sm-2 col-form-label pt-0">Select City*</label>
                         <% cityNames = ["Surat","Baroda","Bhavnagar","Mumbai"] %> 
                         <div class="col-sm-10">
                             <select class="form-select" name="city" id="validationCustom04" >
                                 <option value="">-- Select City</option>
                                 <% cityNames.map((item)=>{ %>
-                                    <option value="<%= item %>"><%= item %></option>
+                                    <option value="<%= item %>" <%= oldValue && oldValue.city ==item ? 'selected' : '' %>><%= item %></option>
                                   <% }) %>
                             </select>
+                            <% if(errors && errors.city) { %>
+                              <p class="text-danger m-0 mt-1">*<%= errors.city.msg %></p>
+                            <%  } %>
                         </div>
                       </div>
 
                       <div class="row mb-3">
-                        <label for="inputPassword3" class="col-sm-2 col-form-label text-nowrap">Upload Image</label>
+                        <label for="inputPassword3" class="col-sm-2 col-form-label text-nowrap">Upload Image*</label>
                         <div class="col-sm-10">
                             <div class="input-group mb-3">
                                 <input type="file" name="admin_image" class="form-control" id="inputGroupFile02" />
@@ -153,12 +177,14 @@
                       </div>
 
                       <div class="row mb-3">
-                        <label for="inputPassword3" class="col-sm-2 col-form-label">About</label>
+                        <label for="inputPassword3" class="col-sm-2 col-form-label">About*</label>
                         <div class="col-sm-10">
-                            <textarea name="about" class="form-control"></textarea>
+                            <textarea name="about" class="form-control"><%= oldValue&& oldValue.about ? oldValue.about:'' %></textarea>
+                            <% if(errors && errors.about) { %>
+                              <p class="text-danger m-0 mt-1">*<%= errors.about.msg %></p>
+                            <%  } %>  
                         </div>
                       </div>
-
                     </div>
                     <!--end::Body-->
                     <!--begin::Footer-->

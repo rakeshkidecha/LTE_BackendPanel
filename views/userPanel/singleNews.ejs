@@ -40,9 +40,9 @@
                     <button type="submit" class="btn ms-2">Comment</button>
                 </form>
             </div>
-            <div class="my-4">
+            <div class="my-4" id="allComments">
                 <% allComments.map((item)=>{ %>
-                    <div class="d-flex">
+                    <div class="d-flex my-3">
                         <div class="profile_image" data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="<%= item.userId.profile_image %>" alt="profileImage" alt="profileImage" width="100%" class="rounded-circle img-fluid" />
                         </div>
@@ -54,6 +54,24 @@
                             </h6>
                             <p class="mb-2"><%= item.comment %></p>
                             <p style="font-size: 12px;" class="text-secondary"><%= item.time %></p>
+                            <div class="d-flex align-items-center">
+                                <a href="javascript:void()" class="nav-link me-4" onclick="likeComment(`<%= item._id %>`,`<%= item.like %>`)">
+                                    <% if(item.likeUserId.includes(locals.userData && locals.userData._doc._id)) { %>
+                                        <i class="fa-solid fa-thumbs-up text-primary mx-2"></i>
+                                    <% }else{ %>   
+                                        <i class="fa-regular fa-thumbs-up"></i> 
+                                    <% } %>    
+                                    <span><%= item.like %></span>
+                                </a>
+                                <a href="javascript:void()" class="nav-link" onclick="deslikeComment(`<%= item._id %>`,`<%= item.deslike %>`)">
+                                    <% if(item.deslikeUserId.includes(locals.userData && locals.userData._doc._id)) { %>
+                                        <i class="fa-solid fa-thumbs-down text-primary"></i>
+                                    <% }else{ %>   
+                                        <i class="fa-regular fa-thumbs-down"></i> 
+                                    <% } %>    
+                                    <span><%= item.deslike %></span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 <% })%>  
@@ -64,3 +82,123 @@
     
 
 <%- include('footer') %>
+
+<script>
+    function likeComment(id,currlike){
+        console.log(id)
+        console.log(currlike)
+        '<% if(!locals.userData){ %>'
+            window.location.href='/userLogin';
+            return;
+        '<%  } %>'
+
+        $.ajax({
+            type:'GET',
+            url:`/likeComment/${id}/${currlike}/<%= locals.userData && locals.userData._doc._id %>`,
+            success:(res)=>{
+                console.log(res);
+                let ihtml = '';
+                res.map((item)=>{
+                    ihtml+= `
+                         <div class="d-flex my-3">
+                        <div class="profile_image" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="${item.userId.profile_image }" alt="profileImage" alt="profileImage" width="100%" class="rounded-circle img-fluid" />
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="m-0">
+                                ${ item.userId.name}
+                                ${ '<%- locals.userData && JSON.stringify(locals.userData._doc._id)%>' === JSON.stringify(item.userId._id)?
+                                   ` <a href="/deleteComment/${item._id}" class="ms-2" style="font-size: 14px;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>`:''
+                                } 
+                            </h6>
+                            <p class="mb-2">${item.comment}</p>
+                            <p style="font-size: 12px;" class="text-secondary">${item.time}</p>
+                            <div class="d-flex align-items-center">
+                                <a href="javascript:void()" class="nav-link me-4" onclick='likeComment(${JSON.stringify(item._id)},${ item.like})'>
+                                    ${ item.likeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                    `<i class="fa-solid fa-thumbs-up text-primary"></i>`:'<i class="fa-regular fa-thumbs-up"></i> '
+                                    }    
+                                    <span>${item.like}</span>
+                                </a>
+                                <a href="javascript:void()" class="nav-link me-4" onclick='deslikeComment(${JSON.stringify(item._id)},${ item.deslike})'>
+                                    ${ item.deslikeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                    `<i class="fa-solid fa-thumbs-down text-primary"></i>`:'<i class="fa-regular fa-thumbs-down"></i> '
+                                    }    
+                                    <span>${item.deslike}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                })
+
+                document.querySelector('#allComments').innerHTML = ihtml;
+            },
+            error:(err)=>{
+                console.log("Something Wrong",err);
+            }
+        })
+    }
+
+
+    
+    function deslikeComment(id,currdeslike){
+        console.log(id)
+        console.log(currdeslike)
+        '<% if(!locals.userData){ %>'
+            window.location.href='/userLogin';
+            return;
+        '<%  } %>'
+
+        $.ajax({
+            type:'GET',
+            url:`/deslikeComment/${id}/${currdeslike}/<%= locals.userData && locals.userData._doc._id %>`,
+            success:(res)=>{
+                console.log(res);
+                let ihtml = '';
+                res.map((item)=>{
+                    ihtml+= `
+                         <div class="d-flex my-3">
+                        <div class="profile_image" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="${item.userId.profile_image }" alt="profileImage" alt="profileImage" width="100%" class="rounded-circle img-fluid" />
+                        </div>
+                        <div class="ms-3">
+                            <h6 class="m-0">
+                                ${ item.userId.name}
+                                ${ '<%- locals.userData && JSON.stringify(locals.userData._doc._id)%>' === JSON.stringify(item.userId._id)?
+                                   ` <a href="/deleteComment/${item._id}" class="ms-2" style="font-size: 14px;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>`:''
+                                } 
+                            </h6>
+                            <p class="mb-2">${item.comment}</p>
+                            <p style="font-size: 12px;" class="text-secondary">${item.time}</p>
+                            <div class="d-flex align-items-center">
+                                <a href="javascript:void()" class="nav-link me-4" onclick='likeComment(${JSON.stringify(item._id)},${ item.like})'>
+                                    ${ item.likeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                    `<i class="fa-solid fa-thumbs-up text-primary"></i>`:'<i class="fa-regular fa-thumbs-up"></i> '
+                                    }    
+                                    <span>${item.like}</span>
+                                </a>
+                                <a href="javascript:void()" class="nav-link me-4" onclick='deslikeComment(${JSON.stringify(item._id)},${ item.deslike})'>
+                                    ${ item.deslikeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                    `<i class="fa-solid fa-thumbs-down text-primary"></i>`:'<i class="fa-regular fa-thumbs-down"></i> '
+                                    }    
+                                    <span>${item.deslike}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                })
+
+                document.querySelector('#allComments').innerHTML = ihtml;
+            },
+            error:(err)=>{
+                console.log("Something Wrong",err);
+            }
+        })
+    }
+</script>

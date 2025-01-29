@@ -7,7 +7,10 @@ const {validationResult} = require('express-validator');
 
 module.exports.addCategory = async (req,res)=>{
     try {
-        return res.render('category/addCategory');
+        return res.render('category/addCategory',{
+            errors :null,
+            oldValue : null
+        });
     } catch (err) {
         console.log(err);
         res.locals.flash = req.flash('error',"Something Wrong");
@@ -19,9 +22,11 @@ module.exports.insertCategory= async(req,res)=>{
     try {
 
         const result = validationResult(req);
-        if(result.errors.length > 0){
-            console.log(result);
-            return res.redirect('back');
+        if(!result.isEmpty()){
+            return res.render('category/addCategory',{
+                errors : result.mapped(),
+                oldValue : req.body
+            })
         }
         
         const addedCategory = await Category.create(req.body);
@@ -29,17 +34,17 @@ module.exports.insertCategory= async(req,res)=>{
         if(addedCategory){
             console.log("Category Added successfully");
             res.locals.flash = req.flash('success',"Category Added successfully");
-            return res.redirect('back');
+            return res.redirect('/category');
         }else{
             console.log("Faild to add Category");
             res.locals.flash = req.flash('error',"Faild to add Category");
-            return res.redirect('back')
+            return res.redirect('/category')
         }
 
     } catch (err) {
         console.log(err);
         res.locals.flash = req.flash('error',"Something Wrong");
-        return res.redirect('back');
+        return res.redirect('/category');
     }
 }
 

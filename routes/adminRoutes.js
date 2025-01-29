@@ -65,7 +65,7 @@ router.post('/insertAdmin',Admin.uploadAdminImage,[
         const checkEmail = await Admin.findOne({email:value});
         if(checkEmail) throw new Error('This Email is Alresy Exist');
     }),
-    check('password').notEmpty().withMessage('Password is Required').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i").withMessage("Password must be contain one lowercase, one uppercase, one special catecter and on digit"),
+    check('password').notEmpty().withMessage('Password is Required').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,20}$/, "i").withMessage("Password must be contain one lowercase, one uppercase, one special catecter ,an digit and 8-20 catecter length"),
     check('gender').notEmpty().withMessage("Gender is required"),
     check('hobby').notEmpty().withMessage("Hobby is required"),
     check('city').notEmpty().withMessage("City is required"),

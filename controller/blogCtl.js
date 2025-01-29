@@ -8,7 +8,11 @@ const {validationResult} = require('express-validator');
 module.exports.addBlog = async (req,res)=>{
     try {
         const allCategory = await Category.find({status:true});
-        return res.render('blog/addBlog',{allCategory});
+        return res.render('blog/addBlog',{
+            allCategory,
+            errors : null,
+            oldValue : null
+        });
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
@@ -18,13 +22,16 @@ module.exports.addBlog = async (req,res)=>{
 
 module.exports.insertBlog = async (req,res)=>{
     try {
-
         const result = validationResult(req);
-        if(result.errors.length > 0){
+        if(!result.isEmpty()){
             console.log(result);
-            return res.redirect('back');
+            const allCategory = await Category.find({status:true});
+            return res.render('blog/addBlog',{
+                allCategory,
+                errors : result.mapped(),
+                oldValue : req.body
+            })
         }
-
 
         let imagePath = '';
         if(req.file){
@@ -39,16 +46,16 @@ module.exports.insertBlog = async (req,res)=>{
             await Category.findByIdAndUpdate(addedBlog.categoryId,findCategory);
             console.log("Blog Add Successfully");
             res.locals.flash = req.flash('success',"Blog Add Successfully");
-            return res.redirect('back');
+            return res.redirect('/blog');
         }else{
             res.locals.flash = req.flash('error',"Faild to add blog");
             console.log("Faild to add Blog");
-            return res.redirect('back');
+            return res.redirect('/blog');
         }
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);
-        return res.redirect('back');
+        return res.redirect('/blog');
     }
 }
 
