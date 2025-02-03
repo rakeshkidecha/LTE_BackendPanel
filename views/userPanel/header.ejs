@@ -75,9 +75,9 @@
     <aside class="position-absolute left-0 bottom-0">
         <div>
             <ul class="list-unstyled px-4 ">
-                <li class=" mt-4"><a href="/" class="nav-link py-2 <%= !currentCategory?'activeCategory':'' %> ">All News <%= totalBlog %></a></li>
+                <li class=" mt-4"><a href="/" class="nav-link d-flex justify-content-between align-items-center py-2 <%= !currentCategory?'activeCategory':'' %> ">All News <span class="rounded-circle text-center text-white blog-count"><%= totalBlog %></span></a></li>
                 <% allCategory.map((item)=>{ %>
-                    <li><a href="/?catId=<%= item.id %>" class="nav-link py-2 <%= currentCategory&& currentCategory.id==item.id?'activeCategory':'' %>"><%= item.categoryName %> <span><%= item.blogCount %></span></a></li>
+                    <li><a href="/?catId=<%= item.id %>" class="nav-link d-flex justify-content-between align-items-center py-2 <%= currentCategory&& currentCategory.id==item.id?'activeCategory':'' %>"><%= item.categoryName %> <span class="rounded-circle text-center text-white blog-count"><%= item.blogCount %></span></a></li>
                 <% }) %>
             </ul>
         </div>

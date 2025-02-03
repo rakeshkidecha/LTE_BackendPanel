@@ -134,23 +134,7 @@
                 </div>
                 <!-- /.card -->
               </div>
-              <!-- comment chart   -->
-              <div class="col-lg-6 connectedSortable">
-                <div class="card mb-4">
-                  <div class="card-header"><h3 class="card-title">Comments in Blog</h3></div>
-                  <div class="card-body">
-                    <div class="text-center mb-4">
-                      <div onclick="changeCommentChartType('pie')" style="font-size: 12px;" class="btn btn-primary">Pie</div>
-                      <div onclick="changeCommentChartType('bar')" style="font-size: 12px;" class="btn btn-primary">Bar</div>
-                      <div onclick="changeCommentChartType('doughnut')" style="font-size: 12px;" class="btn btn-primary">Doughnut</div>
-                    </div>
-                    <div>
-                      <canvas id="comment-chart" ></canvas>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card -->
-              </div>
+              
               
               <!-- /.Start col -->
               <!-- <div class="col-lg-6">
@@ -203,33 +187,7 @@
         });
       }
 
-      let commentChart;
-      changeCommentChartType('bar');
-      function changeCommentChartType(chartType){
-        if(commentChart){
-          commentChart.destroy();
-        }
-        const ctx = document.getElementById('comment-chart');
-        commentChart = new Chart(ctx, {
-          type: chartType,
-          data: {
-            labels: JSON.parse('<%- JSON.stringify(blogLable) %>'),
-            datasets: [{
-              label: 'Comments',
-              data: JSON.parse('<%- JSON.stringify(commentVlaue) %>'),
-              borderWidth: 1
-            }]
-          },
-          options: {
-            scales: {
-              y: {
-                beginAtZero: true
-              }
-            }
-          }
-        });
-      }
-
+      
       </script>
   
       <!-- <script>

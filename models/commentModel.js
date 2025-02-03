@@ -16,19 +16,11 @@ const CommentSchema=  mongoose.Schema({
         type:String,
         required:true
     },
-    like:{
-        type:Number,
-        default:0
-    },
-    likeUserId : [{
+    likes : [{
        type:mongoose.Schema.Types.ObjectId,
        ref:'User' 
     }],
-    deslike:{
-        type:Number,
-        default: 0
-    },
-    deslikeUserId : [{
+    dislikes : [{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User' 
      }],

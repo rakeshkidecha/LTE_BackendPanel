@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
-const port =  8002;
 const db = require('./config/db');
+const env = require('dotenv').config();
 const cookieParser = require('cookie-parser');
 
 const passport = require('passport');
@@ -44,4 +44,4 @@ app.use('/',require('./routes/adminRoutes'));
 
 
 
-app.listen(port,err=>console.log(err?err:"Server runing on http://localhost:"+port));
+app.listen(process.env.PORT,err=>console.log(err?err:"Server runing on http://localhost:"+process.env.PORT));

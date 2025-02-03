@@ -116,6 +116,26 @@ form{
 ::placeholder{
     font-size: 14px;
 }
+.or::before{
+    content: '';
+    width: 100%;
+    height: 1px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    background-color: rgba(173, 173, 173, 0.783);
+    z-index: -1;
+}
+
+.blog-count{
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    font-size: 14px;
+    background-color: #CB0F22;
+}
+
 /* footer  */
 footer{
     background-color: rgb(28, 27, 27);

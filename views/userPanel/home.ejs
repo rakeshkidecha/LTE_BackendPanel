@@ -22,7 +22,7 @@
                                 <div class="col-md-8">
                                 <div class="card-body position-relative">
                                     <h4><%= item.title %></h4>
-                                    <p><%- item.description.substr(0,200) %> .....</p>
+                                    <p><%- (item.description.indexOf('<p><img')!=0 &&  item.description.indexOf('<p><video')!=0 &&  item.description.indexOf('<p><iframe')!=0) ?item.description.substr(0,200):'' %> .....</p>
                                     <p class="text-secondary z-1 position-relative" style="font-size: 14px;"><%= item.time %> </p>
                                 </div>
                             </div>

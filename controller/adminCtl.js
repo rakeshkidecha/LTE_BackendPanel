@@ -17,7 +17,6 @@ module.exports.dashBoard = async (req,res)=>{
         const totalCommets = await Comment.find({status:true}).countDocuments();    
 
         const allCategory = await Category.find({status:true}).populate('blogIds').exec();
-        const allBlog = await Blog.find({status:true}).populate('commentIds').exec();
 
         const lables = allCategory.map((item)=>item.categoryName);
         let values = [] ;
@@ -31,17 +30,6 @@ module.exports.dashBoard = async (req,res)=>{
             values.push(count);
         })
 
-        const blogLable = allBlog.map((item)=>item.title);
-        let commentVlaue = [] ;
-        allBlog.map((item)=>{
-            let count = 0;
-            item.commentIds.map((item)=>{
-                if(item.status){
-                    count++;
-                }
-            })
-            commentVlaue.push(count);
-        })
 
         return res.render('admin/dashboard',{
             totalBlog,
@@ -49,8 +37,6 @@ module.exports.dashBoard = async (req,res)=>{
             totalCommets,
             lables,
             values,
-            blogLable,
-            commentVlaue
         });
        
     } catch (err) {

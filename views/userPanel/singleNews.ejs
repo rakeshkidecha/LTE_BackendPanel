@@ -55,21 +55,21 @@
                             <p class="mb-2"><%= item.comment %></p>
                             <p style="font-size: 12px;" class="text-secondary"><%= item.time %></p>
                             <div class="d-flex align-items-center">
-                                <a href="javascript:void()" class="nav-link me-4" onclick="likeComment(`<%= item._id %>`,`<%= item.like %>`)">
-                                    <% if(item.likeUserId.includes(locals.userData && locals.userData._doc._id)) { %>
+                                <a href="javascript:void()" class="nav-link me-4" onclick="likeComment(`<%= item._id %>`)">
+                                    <% if(item.likes.includes(locals.userData && locals.userData._doc._id)) { %>
                                         <i class="fa-solid fa-thumbs-up text-primary mx-2"></i>
                                     <% }else{ %>   
                                         <i class="fa-regular fa-thumbs-up"></i> 
                                     <% } %>    
-                                    <span><%= item.like %></span>
+                                    <span><%= item.likes.length %></span>
                                 </a>
-                                <a href="javascript:void()" class="nav-link" onclick="deslikeComment(`<%= item._id %>`,`<%= item.deslike %>`)">
-                                    <% if(item.deslikeUserId.includes(locals.userData && locals.userData._doc._id)) { %>
+                                <a href="javascript:void()" class="nav-link" onclick="dislikeComment(`<%= item._id %>`)">
+                                    <% if(item.dislikes.includes(locals.userData && locals.userData._doc._id)) { %>
                                         <i class="fa-solid fa-thumbs-down text-primary"></i>
                                     <% }else{ %>   
                                         <i class="fa-regular fa-thumbs-down"></i> 
                                     <% } %>    
-                                    <span><%= item.deslike %></span>
+                                    <span><%= item.dislikes.length %></span>
                                 </a>
                             </div>
                         </div>
@@ -84,17 +84,16 @@
 <%- include('footer') %>
 
 <script>
-    function likeComment(id,currlike){
+    function likeComment(id){
         console.log(id)
-        console.log(currlike)
         '<% if(!locals.userData){ %>'
-            window.location.href='/userLogin';
+            window.location.href=`/userLogin`;
             return;
         '<%  } %>'
 
         $.ajax({
             type:'GET',
-            url:`/likeComment/${id}/${currlike}/<%= locals.userData && locals.userData._doc._id %>`,
+            url:`/likeComment/${id}`,
             success:(res)=>{
                 console.log(res);
                 let ihtml = '';
@@ -116,17 +115,17 @@
                             <p class="mb-2">${item.comment}</p>
                             <p style="font-size: 12px;" class="text-secondary">${item.time}</p>
                             <div class="d-flex align-items-center">
-                                <a href="javascript:void()" class="nav-link me-4" onclick='likeComment(${JSON.stringify(item._id)},${ item.like})'>
-                                    ${ item.likeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                <a href="javascript:void()" class="nav-link me-4" onclick='likeComment(${JSON.stringify(item._id)})'>
+                                    ${ item.likes.includes('<%- locals.userData && locals.userData._doc._id %>')?
                                     `<i class="fa-solid fa-thumbs-up text-primary"></i>`:'<i class="fa-regular fa-thumbs-up"></i> '
                                     }    
-                                    <span>${item.like}</span>
+                                    <span>${item.likes.length}</span>
                                 </a>
-                                <a href="javascript:void()" class="nav-link me-4" onclick='deslikeComment(${JSON.stringify(item._id)},${ item.deslike})'>
-                                    ${ item.deslikeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                <a href="javascript:void()" class="nav-link me-4" onclick='dislikeComment(${JSON.stringify(item._id)})'>
+                                    ${ item.dislikes.includes('<%- locals.userData && locals.userData._doc._id %>')?
                                     `<i class="fa-solid fa-thumbs-down text-primary"></i>`:'<i class="fa-regular fa-thumbs-down"></i> '
                                     }    
-                                    <span>${item.deslike}</span>
+                                    <span>${item.dislikes.length}</span>
                                 </a>
                             </div>
                         </div>
@@ -144,9 +143,8 @@
 
 
     
-    function deslikeComment(id,currdeslike){
+    function dislikeComment(id){
         console.log(id)
-        console.log(currdeslike)
         '<% if(!locals.userData){ %>'
             window.location.href='/userLogin';
             return;
@@ -154,7 +152,7 @@
 
         $.ajax({
             type:'GET',
-            url:`/deslikeComment/${id}/${currdeslike}/<%= locals.userData && locals.userData._doc._id %>`,
+            url:`/dislikeComment/${id}`,
             success:(res)=>{
                 console.log(res);
                 let ihtml = '';
@@ -176,17 +174,17 @@
                             <p class="mb-2">${item.comment}</p>
                             <p style="font-size: 12px;" class="text-secondary">${item.time}</p>
                             <div class="d-flex align-items-center">
-                                <a href="javascript:void()" class="nav-link me-4" onclick='likeComment(${JSON.stringify(item._id)},${ item.like})'>
-                                    ${ item.likeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                <a href="javascript:void()" class="nav-link me-4" onclick='likeComment(${JSON.stringify(item._id)})'>
+                                    ${ item.likes.includes('<%- locals.userData && locals.userData._doc._id %>')?
                                     `<i class="fa-solid fa-thumbs-up text-primary"></i>`:'<i class="fa-regular fa-thumbs-up"></i> '
                                     }    
-                                    <span>${item.like}</span>
+                                    <span>${item.likes.length}</span>
                                 </a>
-                                <a href="javascript:void()" class="nav-link me-4" onclick='deslikeComment(${JSON.stringify(item._id)},${ item.deslike})'>
-                                    ${ item.deslikeUserId.includes('<%- locals.userData && locals.userData._doc._id %>')?
+                                <a href="javascript:void()" class="nav-link me-4" onclick='dislikeComment(${JSON.stringify(item._id)})'>
+                                    ${ item.dislikes.includes('<%- locals.userData && locals.userData._doc._id %>')?
                                     `<i class="fa-solid fa-thumbs-down text-primary"></i>`:'<i class="fa-regular fa-thumbs-down"></i> '
                                     }    
-                                    <span>${item.deslike}</span>
+                                    <span>${item.dislikes.length}</span>
                                 </a>
                             </div>
                         </div>

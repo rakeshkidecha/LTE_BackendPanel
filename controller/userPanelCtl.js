@@ -8,6 +8,9 @@ const {validationResult} = require('express-validator');
 
 module.exports.home = async (req,res)=>{
     try {
+
+        res.clearCookie('preUrl');
+
         const reqPath =(req.url).substr(0,11);
         let searchValue = '';
         let page = 0,perPageBlog = 3;
@@ -83,6 +86,9 @@ module.exports.home = async (req,res)=>{
 
 module.exports.singleNews = async (req,res)=>{
     try {
+
+        res.cookie('preUrl',`/singleNews/${req.params.id}`)
+
         const reqPath =(req.url).substr(0,11);
         const allCategory = await Category.find({status:true});
         const singleNews = await Blog.findById({_id:req.params.id}).populate('categoryId').exec();
@@ -129,6 +135,7 @@ module.exports.addComment = async(req,res)=>{
 
 module.exports.deleteComment = async (req,res)=>{
     try {
+        
         const singleComment = await Comment.findById(req.params.id);
         const deletedComment = await Comment.findByIdAndDelete(req.params.id);
         if(deletedComment){
@@ -153,22 +160,17 @@ module.exports.deleteComment = async (req,res)=>{
 module.exports.likeComment = async(req,res)=>{
     try {
 
-        const {id,currlike,userId} = req.params;
-
+        const {id} = req.params;
         const singleComment = await Comment.findById(id).populate('userId').exec();
 
-        if(!singleComment.likeUserId.includes(userId)){
+        if(!singleComment.likes.includes(req.user._doc._id)){
 
-            if(singleComment.deslikeUserId.includes(userId)){
-                singleComment.deslikeUserId.splice(singleComment.deslikeUserId.indexOf(userId),1);
-                singleComment.deslike = singleComment.deslike - 1
-            }         
-
-            singleComment.likeUserId.push(userId);
-            singleComment.like = parseInt(currlike) + 1
+            if(singleComment.dislikes.includes(req.user._doc._id)){
+                singleComment.dislikes.splice(singleComment.dislikes.indexOf(req.user._doc._id),1);
+            }     
+            singleComment.likes.push(req.user._doc._id);
         }else{
-            singleComment.likeUserId.splice(singleComment.likeUserId.indexOf(userId),1);
-            singleComment.like = parseInt(currlike) - 1
+            singleComment.likes.splice(singleComment.likes.indexOf(req.user._doc._id),1);
         }
         await Comment.findByIdAndUpdate(id,singleComment);
 
@@ -193,24 +195,21 @@ module.exports.likeComment = async(req,res)=>{
     }
 }
 
-module.exports.deslikeComment = async(req,res)=>{
+module.exports.dislikeComment = async(req,res)=>{
     try {
 
-        const {id,currdeslike,userId} = req.params;
+        const {id} = req.params;
         const singleComment = await Comment.findById(id).populate('userId').exec();
 
-        if(!singleComment.deslikeUserId.includes(userId)){
+        if(!singleComment.dislikes.includes(req.user._doc._id)){
 
-            if(singleComment.likeUserId.includes(userId)){
-                singleComment.likeUserId.splice(singleComment.likeUserId.indexOf(userId),1);
-                singleComment.like = singleComment.like - 1;
+            if(singleComment.likes.includes(req.user._doc._id)){
+                singleComment.likes.splice(singleComment.likes.indexOf(req.user._doc._id),1);
             }
 
-            singleComment.deslikeUserId.push(userId);
-            singleComment.deslike = parseInt(currdeslike) + 1
+            singleComment.dislikes.push(req.user._doc._id);
         }else{
-            singleComment.deslikeUserId.splice(singleComment.deslikeUserId.indexOf(userId),1);
-            singleComment.deslike = parseInt(currdeslike) - 1
+            singleComment.dislikes.splice(singleComment.dislikes.indexOf(req.user._doc._id),1);
         }
         await Comment.findByIdAndUpdate(id,singleComment);
 
@@ -317,7 +316,13 @@ module.exports.userLogin = async(req,res)=>{
 module.exports.checkUser = async (req,res)=>{
     try {
         req.flash('success',"Login Successfully");
-        return res.redirect('/')
+        if(req.cookies.preUrl){
+            const preUrl =  req.cookies.preUrl;
+            res.clearCookie('preUrl');
+            return res.redirect(preUrl);
+        }else{
+            return res.redirect('/')
+        }
     } catch (err) {
         res.locals.flash = req.flash('error',"Something Wrong");
         console.log(err);

@@ -15,8 +15,8 @@ router.post('/addComment',UserPanelCtl.addComment);
 
 router.get('/deleteComment/:id',UserPanelCtl.deleteComment);
 
-router.get('/likeComment/:id/:currlike/:userId',UserPanelCtl.likeComment);
-router.get('/deslikeComment/:id/:currdeslike/:userId',UserPanelCtl.deslikeComment);
+router.get('/likeComment/:id',UserPanelCtl.likeComment);
+router.get('/dislikeComment/:id',UserPanelCtl.dislikeComment);
 //---------------
 
 // user login adn sign up 
@@ -42,6 +42,16 @@ router.post('/createUser',User.uploadUserImage,[
 router.get('/userLogin',UserPanelCtl.userLogin);
 
 router.post('/checkUser',passport.authenticate('user_strategy',{failureRedirect:'/userLogin'}),UserPanelCtl.checkUser);
+
+router.get('/google',
+    passport.authenticate('google', {
+        scope:['email', 'profile']
+    }
+));
+
+router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/userLogin'}),async (req,res)=>{
+    res.redirect('/');
+})
 
 router.get('/logOutUser',UserPanelCtl.logOutUser);
 //---------------------------
