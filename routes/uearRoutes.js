@@ -15,8 +15,8 @@ router.post('/addComment',UserPanelCtl.addComment);
 
 router.get('/deleteComment/:id',UserPanelCtl.deleteComment);
 
-router.get('/likeComment/:id',UserPanelCtl.likeComment);
-router.get('/dislikeComment/:id',UserPanelCtl.dislikeComment);
+router.get('/likeComment/:id/:blogId',UserPanelCtl.likeComment);
+router.get('/dislikeComment/:id/:blogId',UserPanelCtl.dislikeComment);
 //---------------
 
 // user login adn sign up 

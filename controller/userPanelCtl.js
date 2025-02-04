@@ -170,8 +170,9 @@ module.exports.deleteComment = async (req,res)=>{
 
 module.exports.likeComment = async(req,res)=>{
     try {
-
-        const {id} = req.params;
+        console.log(req.params);
+        const {id,blogId} = req.params;
+        console.log(blogId);
         const singleComment = await Comment.findById(id).populate('userId').exec();
 
         if(!singleComment.likes.includes(req.user._doc._id)){
@@ -186,7 +187,7 @@ module.exports.likeComment = async(req,res)=>{
         await Comment.findByIdAndUpdate(id,singleComment);
 
 
-        let allComments = await Comment.find({status:true}).populate('userId').exec();
+        let allComments = await Comment.find({status:true,blogId:blogId}).populate('userId').exec();
 
         allComments = allComments.map((item)=>{
             return {...item.toObject(),time: moment(item.createdAt).fromNow()}
@@ -209,7 +210,7 @@ module.exports.likeComment = async(req,res)=>{
 module.exports.dislikeComment = async(req,res)=>{
     try {
 
-        const {id} = req.params;
+        const {id,blogId} = req.params;
         const singleComment = await Comment.findById(id).populate('userId').exec();
 
         if(!singleComment.dislikes.includes(req.user._doc._id)){
@@ -225,7 +226,7 @@ module.exports.dislikeComment = async(req,res)=>{
         await Comment.findByIdAndUpdate(id,singleComment);
 
 
-        let allComments = await Comment.find({status:true}).populate('userId').exec();
+        let allComments = await Comment.find({status:true,blogId:blogId}).populate('userId').exec();
 
         allComments = allComments.map((item)=>{
             return {...item.toObject(),time: moment(item.createdAt).fromNow()}
