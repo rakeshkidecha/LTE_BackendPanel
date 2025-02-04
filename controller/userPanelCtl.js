@@ -249,7 +249,7 @@ module.exports.dislikeComment = async(req,res)=>{
 // user login and  sign up 
 module.exports.userSignUp = async(req,res)=>{
     try {
-        return res.render('userPanel/userSignUp',{
+        return res.render('userPanel/userSIgnUp',{
             errors : null,
             oldValue:null
         })
