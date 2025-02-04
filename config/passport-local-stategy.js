@@ -41,7 +41,7 @@ passport.use('user_strategy',new LocalStategy({usernameField:'email',passReqToCa
 passport.use(new GoogleStrategy({
     clientID: '1020585624227-72sqeo7cptc9t9nkpe57f3cradhpub36.apps.googleusercontent.com',
     clientSecret: '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',
-    callbackURL: "http://localhost:8004/auth/google/callback",
+    callbackURL: "https://bloging-4qs7.onrender.com/auth/google/callback",
     passReqToCallback   : true
 },async (req,accessToken, refreshToken, profile, done)=>{
     if(profile){
