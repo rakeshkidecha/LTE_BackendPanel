@@ -266,7 +266,7 @@ module.exports.createUser = async (req,res)=>{
         const result = validationResult(req);
         if(!result.isEmpty()){
             console.log(result);
-            return res.render('userPanel/userSignUp',{
+            return res.render('userPanel/userSIgnUp',{
                 errors : result.mapped(),
                 oldValue : req.body
             })
