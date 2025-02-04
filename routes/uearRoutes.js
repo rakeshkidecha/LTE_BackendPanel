@@ -50,7 +50,13 @@ router.get('/google',
 ));
 
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/userLogin'}),async (req,res)=>{
-    res.redirect('/');
+    if(req.cookies.preUrl){
+        const preUrl =  req.cookies.preUrl;
+        res.clearCookie('preUrl');
+        return res.redirect(preUrl);
+    }else{
+        return res.redirect('/')
+    }
 })
 
 router.get('/logOutUser',UserPanelCtl.logOutUser);
