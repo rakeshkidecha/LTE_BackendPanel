@@ -90,7 +90,18 @@ module.exports.singleNews = async (req,res)=>{
         res.cookie('preUrl',`/singleNews/${req.params.id}`)
 
         const reqPath =(req.url).substr(0,11);
-        const allCategory = await Category.find({status:true});
+
+        const allCategory = await Category.find({status:true}).populate('blogIds').exec();
+        allCategory.map((item)=>{
+            let count = 0 ;
+            item.blogIds.map((v)=>{
+                if(v.status){
+                    count++;
+                }
+            })
+            item.blogCount = count;
+        })
+
         const singleNews = await Blog.findById({_id:req.params.id}).populate('categoryId').exec();
         const recentBlog = await Blog.find({status:true}).sort({_id:-1}).limit(5);
         const totalBlog = await Blog.find({status:true}).countDocuments();
