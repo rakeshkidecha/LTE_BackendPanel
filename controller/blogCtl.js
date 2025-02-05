@@ -212,16 +212,20 @@ module.exports.editBlog = async(req,res)=>{
         }else{
             req.body.blog_image = singleBlog.blog_image;
         }
-        const singleCategory = await Category.findById(singleBlog.categoryId);
-        const index = singleCategory.blogIds.indexOf(singleBlog._id);
-        singleCategory.blogIds.splice(index,1);
-        await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
+        
 
         const updatedBlog = await Blog.findByIdAndUpdate(req.body.id,req.body);
         if(updatedBlog){
-            const newCategory = await Category.findById(req.body.categoryId);
-            newCategory.blogIds.push(this.updateBlog._id);
-            await Category.findByIdAndUpdate(req.body.categoryId,newCategory);
+            if(singleBlog.categoryId != req.body.categoryId){
+                const singleCategory = await Category.findById(singleBlog.categoryId);
+                const index = singleCategory.blogIds.indexOf(singleBlog._id);
+                singleCategory.blogIds.splice(index,1);
+                await Category.findByIdAndUpdate(singleCategory._id,singleCategory);
+
+                const newCategory = await Category.findById(req.body.categoryId);
+                newCategory.blogIds.push(updatedBlog._id);
+                await Category.findByIdAndUpdate(req.body.categoryId,newCategory);
+            }
             console.log("Blog Update successfully");
             res.locals.flash = req.flash('success',"Blog Updated Successfully");
             return res.redirect('/blog/viewBlog');
