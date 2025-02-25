@@ -29,3 +29,25 @@ Technology Stack:
 ⚡ Authentication: Passport-local and Passport-Google-oauth2
 
 This project ensures a seamless reading experience for users and a robust admin panel for efficient blog management. 🚀
+
+## 🔧 Installation
+```bash
+1️⃣ **Clone the repository**  
+
+git clone https://github.com/rakeshkidecha/LTE_BackendPanel/.git
+cd LTE_BackendPanel
+
+2️⃣ Install dependencies
+
+npm install
+
+3️⃣ Set up environment variables
+
+Create a .env file in the root directory and add:
+
+MONGODB_CONNECT_URI = Your_Mongodb_uri
+PORT = your_port
+
+4️⃣ Run the application
+
+node index.js
